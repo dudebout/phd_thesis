@@ -1,0 +1,24 @@
+\ProvidesPackage{frames}
+
+\newenvironment{titleframe}{\setbeamercolor{background canvas}{bg = titlegray}
+\setbeamercolor{normal text}{fg = lightgray}
+\begin{frame}[plain]
+}{\end{frame}}
+
+\newcommand{\recap}{
+\begin{frame}[plain]
+\begin{center}
+\fontseries{el} \fontsize{50}{60} \structure{Recap} \hfill %
+\end{center}
+\end{frame}
+\addtocounter{framenumber}{-1}
+}
+
+\newcommand{\newinthesis}{
+\begin{tikzpicture}[baseline=(new.base)]
+\node [starburst, color=darkgreen, draw=darkgreen!50, fill=lightgreen, starburst points=18, starburst point height=5pt, inner sep=1pt] (new) {\scriptsize New};
+\end{tikzpicture}
+}
+
+\newcommand{\inputtikz}[2][]{\begin{tikzpicture}[#1]\input{figures/#2.tikz}\end{tikzpicture}}
+\newcommand{\centertikz}[1]{\begin{center}\inputtikz{#1}\end{center}}

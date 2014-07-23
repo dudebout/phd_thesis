@@ -1,0 +1,45 @@
+\node [dynamic, alert on=<3>, alert on=<5->] (f1) {\(f\one\)};
+\node [strategy, left = of f1, alert on=<5->] (sigma1) {\(\sigma\one\)};
+
+\node [dynamic, alert on=<3>, right = 60pt of f1] (f2) {\(f\two\)};
+\node [strategy, alert on=<3>, right = of f2] (sigma2) {\(\sigma\two\)};
+
+\coordinate (x1) at (f1.200);
+\coordinate [left = of x1] (x2);
+\draw [->, alert on=<5->] (x1) -- node [below] {\(x\one\)} (x2);
+
+\coordinate (a2) at (f1.160);
+\coordinate [left = of a2] (a1);
+\draw [->, alert on=<5->] (a1) -- node [connection, visible on=<2->, alert on=<2>, normal on=<5->] (a3) {} node [above, visible on=<1|handout:0>] {\(a\one\)} (a2);
+\coordinate [above = of a3] (a4);
+\coordinate (a5) at (f2.north);
+\coordinate (a7) at (sigma2.north);
+
+\coordinate (x'1) at (f2.20);
+\coordinate [right = of x'1] (x'2);
+\draw [->, alert on=<3>] (x'1) -- node [above] {\(x\two\)} (x'2);
+
+\coordinate (a'2) at (f2.340);
+\coordinate [right = of a'2] (a'1);
+\draw [->, alert on=<3>] (a'1) -- node [connection, visible on=<2->, alert on=<2>] (a'3) {} node [below, visible on=<1|handout:0>] {\(a\two\)} (a'2);
+\coordinate [below = of a'3] (a'4);
+\coordinate (a'5) at (f1.south);
+\coordinate (a'7) at (sigma1.south);
+
+\begin{pgfonlayer}{background}
+\uncover<2->{
+\draw [->, alert on=<2>] (a3) -- (a4) -| node [pos=.25, above] {\(a\one\)} node [pos=.5, connection] (a6) {} (a5);
+\draw [->, alert on=<2>] (a6) -| (a7);
+\draw [->, alert on=<2-3>, visible on=<1-5>] (a'3) -- (a'4) -| node [pos=.25, below] {\(a\two\)} coordinate [pos=.5] (a'6) (a'5);
+\uncover<5->{
+\draw (a'3) -- (a'4) -- node [pos=.5, below, visible on=<1-4>] {\(a\two\)} (a'6);
+\draw [->, alert on=<5->] (a'6) -- (a'5);
+}
+\draw [->, alert on=<2>, alert on=<5->] (a'6)  -| node [below, pos=.25, visible on=<5-|handout:0>, alert on=<5->] {\(s\one\nxt\)} node [pos=0, connection] {} (a'7);
+}
+\end{pgfonlayer}
+
+\node [above = 40pt of sigma1.north west, anchor = west, inner sep=0pt] {\alert<5->{\(u\one \of{x\one, a\one\uncover<2->{,\alert<2>{\Alt<5-|handout:0>{s\one\nxt}{a\two}}}}, \delta\one\)}};
+\node [above = 40pt of sigma2.north east, anchor = east, inner sep=0pt, visible on=<1-2>] {\(u\two \of{x\two, a\two\uncover<2->{,\alert<2>{{a\one}}}}, \delta\two\)};
+
+\node [fit = (f2) (sigma2), nature, visible on=<6|handout:0>] {Nature};

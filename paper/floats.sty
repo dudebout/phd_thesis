@@ -1,0 +1,17 @@
+\ProvidesPackage{floats}
+
+\RequirePackage[justification=justified,labelfont={sf,bf,up},labelsep=period,textfont={small,it}]{caption}
+
+\RequirePackage[font=small]{subcaption}
+\RequirePackage{float}
+
+\captionsetup[figure]{position=bottom,singlelinecheck=false}
+\captionsetup[table]{position=bottom,singlelinecheck=false}
+\captionsetup[subfigure]{position=bottom,singlelinecheck=false,justification=centering}
+
+\floatstyle{komabelow}
+\restylefloat{figure}
+\floatname{algorithm}{\sffamily Algorithm}
+\g@addto@macro{\algorithmic}{\renewcommand{\textbf}[1]{{\sffamily\bfseries#1}}}
+
+\newcommand{\ccaption}[2][]{\caption[#1]{#1#2}}

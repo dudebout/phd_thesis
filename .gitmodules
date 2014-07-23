@@ -1,0 +1,30 @@
+[submodule "presentation/texmf/tex/latex/latex_ddbsymb"]
+	path = presentation/texmf/tex/latex/latex_ddbsymb
+	url = https://github.com/dudebout/latex_ddbsymb
+[submodule "presentation/texmf/tex/latex/latex_ddbgame"]
+	path = presentation/texmf/tex/latex/latex_ddbgame
+	url = https://github.com/dudebout/latex_ddbgame
+[submodule "presentation/texmf/tex/latex/latex_ddbbeamer"]
+	path = presentation/texmf/tex/latex/latex_ddbbeamer
+	url = https://github.com/dudebout/latex_ddbbeamer
+[submodule "paper/texmf/tex/latex/latex_ddbsymb"]
+	path = paper/texmf/tex/latex/latex_ddbsymb
+	url = https://github.com/dudebout/latex_ddbsymb
+[submodule "paper/texmf/tex/latex/latex_ddbgame"]
+	path = paper/texmf/tex/latex/latex_ddbgame
+	url = https://github.com/dudebout/latex_ddbgame
+[submodule "paper/texmf/tex/latex/latex_ddbthm"]
+	path = paper/texmf/tex/latex/latex_ddbthm
+	url = https://github.com/dudebout/latex_ddbthm
+[submodule "paper/texmf/tex/generic/matrix.skeleton"]
+	path = paper/texmf/tex/generic/matrix.skeleton
+	url = https://github.com/dudebout/matrix.skeleton
+[submodule "paper/texmf/tex/latex/latex_ddbref"]
+	path = paper/texmf/tex/latex/latex_ddbref
+	url = https://github.com/dudebout/latex_ddbref
+[submodule "paper/texmf/tex/latex/latex_ddbglossaries"]
+	path = paper/texmf/tex/latex/latex_ddbglossaries
+	url = https://github.com/dudebout/latex_ddbglossaries
+[submodule "paper/texmf/bibtex/bib/bibtex_ddb"]
+	path = paper/texmf/bibtex/bib/bibtex_ddb
+	url = https://github.com/dudebout/bibtex_ddb

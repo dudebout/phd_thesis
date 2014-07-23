@@ -1,0 +1,30 @@
+\begin{axis}[
+xmin=0,
+ymin=0,
+xmax=1,
+ymax=1,
+ticks=none,
+axis equal image,
+axis line style=dimmer,
+ticklabel style=dimmer,
+label style=dimmer,
+]
+\addplot[name path=id, draw=none] coordinates {(0,0) (1,1)};
+
+\addplot[name path=f1, solid] coordinates {(0,0.2) (0.5,0.2)};
+\addplot[name path=f2, solid] coordinates {(0.25,0.1) (0.25,0.9)};
+\addplot[name path=f3, solid, fill=cC] coordinates {(0.5,0.2) (0.5,0.75) (1,0.2) (0.5,0.2)};
+
+\coordinate (origin) at (0,0);
+\coordinate (unit) at (axis cs:1,1);
+
+\node {};
+
+\circleintersections{f1}{id}
+\circleintersections{f2}{id}
+\connectintersections{f3}{id}
+\end{axis}
+
+\begin{pgfonlayer}{background}
+\draw [dimmer] (origin) -- (unit);
+\end{pgfonlayer}

@@ -1,0 +1,25 @@
+\matrix [information flow, column sep = 16pt, even rows readability guides]
+{
+                 & |[alias=p1]| p\one\Tt &                                                             & |[alias=p1P]| p\one\Tp = \tuple{p\one\Tt, a\one\Tt} &                                        \\
+                 &                       & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{h\Tt, p\one\Tt} &                                                     &                                        \\
+                 &                       &                                                             & |[alias=s]| s\Tp \drawn n \of{a\one\Tt, a\two\Tt}   &                                        \\
+                 &                       & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{h\Tt, p\two\Tt} &                                                     &                                        \\
+                 & |[alias=p2]| p\two\Tt &                                                             & |[alias=p2P]| p\two\Tp = \tuple{p\two\Tt, a\two\Tt} &                                        \\
+|[alias=h]| h\Tt &                       &                                                             &                                                     & |[alias=hP]| h\Tp = \tuple{h\Tt, s\Tp} \\
+};
+
+\draw [dependency] (p1)      -- (p1P);
+\draw [dependency] (p1)      -- (a1.175);
+\draw [dependency] (a1.5)    -- (p1P.185);
+
+\draw [dependency] (p2)      -- (p2P);
+\draw [dependency] (p2)      -- (a2.185);
+\draw [dependency] (a2.355)  -- (p2P.175);
+
+\draw [dependency] (h)       -- (hP);
+\draw [dependency] (a1.355)  -- (s.175);
+\draw [dependency] (a2.east) -- (s.190);
+\draw [dependency] (s.east)  -- (hP.170);
+
+\draw [dependency] (h) to [bend left = 30] (a1.185);
+\draw [dependency] (h) to [bend left = 20] (a2.west);

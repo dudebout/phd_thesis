@@ -1,0 +1,61 @@
+\pgfmathsetseed{1234}
+
+\node [nature] (nature) {Nature};
+\node [dynamic, below = of nature] (f) {\(f\)};
+\node [alt=<4->{markov strategy}{strategy}, left = of f, alert on=<6>, alert on=<10>] (sigma) {\(\sigma\)};
+
+\node [inner sep=0pt, above = 80pt of sigma.north west, anchor=south west, visible on=<1-2>] {\(u \of{x, a, s\nxt}, \delta\)};
+
+\node [below = 30pt of sigma.south west, anchor = north west, inner sep =0, visible on=<1-4|handout:0>] {Real System: \(\rbR\)};
+
+\coordinate (s1) at (nature.south);
+\coordinate [below = of s1] (s2);
+\draw [->, alert on=<7>] (s1) -- node [connection, visible on=<1-3>] (s3) {} node [right] (anchor) {\(s\)} (s2);
+\draw<1-3> [->] (s3) -| (sigma.north);
+
+\node<7-> [alert on=<7-8>, right = 10 pt of anchor] {\(\probaof{s}\)};
+
+\coordinate (x1) at (f.160);
+\coordinate (a1) at (f.200);
+
+\draw [->] (x1) -- node [above] {\(x\)} (sigma.east|-x1);
+\draw [->] (sigma.east|-a1) -- node [below] {\(a\)} (a1);
+
+\uncover<2->{
+\node [predictor, right = 140pt of nature.south, anchor = south west, alert on=<8>] (predictor') {\(\mu\)};
+\node [dynamic, below = of predictor'] (f') {\(f\)};
+\node [markov strategy, left = of f', alert on=<9>] (sigma') {\(\sigma\)};
+
+\node [inner sep=0pt, above = 80pt of sigma'.north west, anchor=south west] {\(u \of{x, a, s\nxt}, \delta\)};
+
+\node [below = 30pt of sigma'.south west, anchor = north west, inner sep =0, visible on=<1-4|handout:0>] {Mockup System: \(\rbM\)};
+
+\coordinate (s'1) at (predictor'.south);
+\coordinate [below = of s'1] (s'2);
+\draw [->] (s'1) -- node [right] {\(s\)} (s'2);
+
+\coordinate (x'1) at (f'.160);
+\coordinate (a'1) at (f'.200);
+
+\draw [->] (x'1) -- node [above] {\(x\)} (sigma'.east|-x'1);
+\draw [->] (sigma'.east|-a'1) -- node [below] {\(a\)} (a'1);
+}
+
+\uncover<5->{
+\node [system, below = of f.south west, alert on=<6-7>, alert on=<10>] (r) {\(\rbR\)};
+\node [system, below = of f'.south west, alert on=<8-9>] (m) {\(\rbM\)};
+\coordinate [right = 30pt of r] (rightofr);
+\coordinate [left = 40pt of r] (start);
+\coordinate [right = 30pt of m] (end);
+\coordinate [below = 20pt of end] (below);
+
+\draw [system connection, visible on=<6->, alert on=<6>, alert on=<10>] (start) -- node [above] {\(\sigma\)} (r);
+
+\draw [alt=<7>{system connection}{draw=none}, visible on=<7-8>, alert] (r) -- node [above] {\(\probaof{s}\)} (rightofr);
+
+\draw [system connection, visible on=<8->, alert on=<8>] (r) -- node [above, visible on=<8->] {\(\mu\)} (m);
+
+\draw [system connection, visible on=<9->, alert on=<9-10>] (m) -- node [above] {\(\sigma\)} (end);
+
+\draw [system connection, visible on=<10->, alert on=<10>] (end) -- (below) -| (start);
+}

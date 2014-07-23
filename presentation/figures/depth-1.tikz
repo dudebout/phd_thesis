@@ -1,0 +1,41 @@
+\node [inner sep=0] (string) {\newbinarystring};
+
+\node [visible on=<2->, below = of string.west, anchor = west, inner sep=0] (probas) {\(\pb{00}, \pb{01}, \pb{11}, \pb{10} \uncover<3->{\iff \pc{0}{0}, \pc{1}{0}, \pc{0}{1}, \pc{1}{1}}\)};
+
+\uncover<4->{
+\node [below = 50pt of probas.south west, anchor = north west, model] (m) {\(m^{1}\)};
+\node [below = 30pt of m, predictor] (mu) {\(\mu\)};
+
+\coordinate [below = 30pt of mu] (s);
+
+\draw [->] (m) -- node [right] (z) {\(z\)} (mu);
+\draw [->] (mu) -- node [connection] (s1) {} node [left] {\(s\)} (s);
+
+\coordinate [right = 35pt of s1] (s2);
+\coordinate [above = 15pt of m] (s3);
+
+\draw [->] (s1) -| (s2) |- (s3) -- (m);
+}
+
+\uncover<5->{
+\node [state, fill= white, right= 100 pt of z]   (z0) {\(z\param{0}\)};
+\node [state, fill = white, right = 40pt of z0] (z1) {\(z\param{1}\)};
+
+\draw [->] (z0) to [bend left = 30] node [above] (z10) {\(s = 1\)} (z1);
+\draw [->] (z1) to [bend left = 30] node [below] (z01) {\(s = 0\)} (z0);
+
+\path (z0) edge[loop left]  node [below, pos = 0.25]  (z00) {\(s = 0\)} (z0);
+\path (z1) edge[loop right] node [above, pos = 0.25] (z11) {\(s = 1\)} (z1);
+
+\begin{pgfonlayer}{background}
+\node [fit =(z00) (z01) (z10) (z11), box, visible on=<5->] (full_m) {};
+\end{pgfonlayer}
+
+\coordinate [above = 30pt of full_m] (s');
+\draw [->] (s') -- node [right] {\(s\)} (full_m);
+
+\coordinate [below = 30pt of full_m] (z'1);
+\coordinate [right = 15pt of full_m] (z'3);
+\draw [->] (full_m) -- node [left] {\(z\)} node [connection] (z'2) {} (z'1);
+\draw [->] (z'2) -| (z'3) -- (full_m);
+}

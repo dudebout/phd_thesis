@@ -1,0 +1,46 @@
+The objective of this research is to develop the framework of \acp{eee} in stochastic games.
+This framework was developed while attempting to design decentralized controllers using learning in stochastic games.
+The overarching goal is to enable a set of agents to control a dynamical system in a decentralized fashion.
+To do so, the agents play a stochastic game crafted such that its equilibria are decentralized controllers for the dynamical system.
+Unfortunately, there exists no algorithm to compute equilibria in stochastic games.
+One explanation for this lack of results is the full-rationality requirement of game theory.
+In the case of stochastic games, full rationality imposes that two requirements be met at equilibrium.
+First, each agent has a perfect model of the game and of its opponents' strategies.
+Second, each agent plays an optimal strategy for the \ac{pomdp} induced by its opponents' strategies.
+Both requirements are unrealistic.
+An agent cannot know the strategies of its opponents; it can only observe the combined effect of its own strategy interacting with its opponents'.
+Furthermore, \acp{pomdp} are intractable; an agent cannot compute an optimal strategy in a reasonable time.
+In addition to these two requirements, engineered agents cannot carry perfect analytical reasoning and have limited memory; they naturally exhibit bounded rationality.
+In this research, bounded rationality is not seen as a limitation and is instead used to relax the two requirements.
+In the \ac{eee} framework, agents formulate low-order empirical models of observed quantities called mockups.
+Mockups have unmodeled states and dynamic effects, but they are statistically consistent; the empirical evidence observed by an agent does not contradict its mockup.
+Each agent uses its mockup to derive an optimal strategy.
+Since agents are interconnected through the system, these mockups are sensitive to the specific strategies employed by other agents.
+In an \ac{eee}, the two requirements are weakened.
+First, each agent has a consistent mockup of the game and the strategies of its opponents.
+Second, each agent plays an optimal strategy for the \ac{mdp} induced by its mockup.
+The main contribution of this dissertation is the use of modeling to study stochastic games.
+This approach, while common in engineering, had not been applied to stochastic games.
+This dissertation is organized as follows.
+
+\Cref{chap:static_game_theory} presents background material on game theory.
+The notions of best response, solution concept for a game, and equilibria are at the heart of this chapter.
+The, often overlooked, distinction between correlated equilibria and correlated-equilibrium distributions is also made.
+Finally, a proof of the existence of Nash equilibria is given.
+This proof has been crafted to make the proof of the existence of~\acp{eee}, which is presented later, as intuitive as possible.
+
+\Cref{chap:dynamic_game_theory} presents repeated games and stochastic games.
+Their introduction relies on the notions presented in~\cref{chap:static_game_theory} and on dynamic programming.
+Using the vocabulary of~\acp{mdp} makes the topics of sequential rationality and folk theorem in repeated games easier to grasp.
+
+\Cref{chap:decentralized_control_and_games} presents existing results concerning decentralized control and game theory.
+Three main classes of results are addressed: learning in games, equilibria in repeated games, and use of bounded rationality.
+
+Finally, \cref{chap:empirical-evidence_equilibria} introduces \acp{eee} and presents results in this framework.
+The presentation starts by analyzing a single-agent problem.
+In this setup, the notions of consistency and optimality are defined.
+These notions are then extended to encompass stochastic games.
+The second part of this chapter highlights three important results in the \ac{eee} framework.
+First, the existence of \acp{eee} is proven.
+Second, a characterization of \acp{eee} in perfect-monitoring repeated games is given in terms of correlated equilibria.
+Third, a result regarding learning \acp{eee} with a finite observation window is presented.

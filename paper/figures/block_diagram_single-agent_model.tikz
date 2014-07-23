@@ -1,0 +1,26 @@
+\node [draw, double, minimum width = 40pt, minimum height=40pt] (f) {\(f\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = of x1] (x2);
+
+\node [draw, minimum width = 40pt, minimum height = 20pt, above = of f] (mu) {\(\mu\)};
+\node [draw, double, minimum width = 40pt, minimum height = 20pt, above = of mu] (m) {\(m\K\)};
+
+\draw [->] (a1) -- node [above] {\(a\)} (a2);
+\draw [->] (x1) -- node [below] {\(x\)} (x2);
+\draw [->] (m) -- node [connection] (z) {} node [right] {\(z\)} (mu);
+\draw [->] (mu) -- node [connection] (s1) {} node [left] {\(s\)} (f);
+
+\coordinate [right = 30pt of s1] (s2);
+\coordinate (s4) at (m.north);
+\coordinate [above = 15pt of s4] (s3);
+
+\draw [->] (s1) -- (s2) |- (s3) -- (s4);
+
+\draw let
+  \p1 = (a1),
+  \p2 = (z)
+in
+  [->] (z.center) -- (\x1, \y2);

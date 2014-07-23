@@ -1,0 +1,15 @@
+\matrix [information flow, column sep = 12pt, even rows readability guides]
+{
+|[alias=x]| x\Tt &                                          & [-12pt] |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt} &                                      & [-12pt]                                      \\
+                 &                                          &                                                    & |[alias=yP]| y\Tp \drawn g \of{x\Tp} &                                              \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{p\Tt} &                                                    &                                      &                                              \\
+|[alias=p]| p\Tt &                                          &                                                    &                                      & |[alias=pP]| p\Tp = \tuple{p\Tt, a\Tt, y\Tp} \\
+};
+
+\draw [dependency] (p)       -- (pP);
+\draw [dependency] (p)       -- (a.west);
+\draw [dependency] (a.355)   -- (pP.175);
+\draw [dependency] (a.5)     -- (xP.200);
+\draw [dependency] (x)       -- (xP);
+\draw [dependency] (xP.355)  -- (yP.175);
+\draw [dependency] (yP.east) -- (pP.165);

@@ -1,0 +1,30 @@
+\begin{axis}[
+axis lines=middle,
+axis line style=dimmer,
+clip=false,
+axis equal image,
+xmax=2.5,
+ymax=3.5,
+xtick={0.6666666666,1,2},
+ytick={1,2,3},
+tick style=dimmer,
+ticklabel style={dimmer, /pgf/number format/.cd,frac},
+label style=dimmer,
+xlabel=\(u\ag{\male}\),
+xlabel style={anchor=north, yshift=-0.15cm}, % 0.15cm is the default /pgfplots/tickwidth
+ylabel=\(u\ag{\female}\),
+ylabel style={anchor=east, xshift=-0.15cm},
+],
+
+\addplot [fill=gray, draw=none] coordinates {(0.666666,1.5) (0.666666,2.333333) (1,3) (2,2) (1.5,1.5) (0.5,1.5)};
+\addplot [fill=gray!20, draw=none] coordinates {(0,0) (0,1) (0.666666,2.333333) (0.666666,1.5) (1.5,1.5) (0,0)};
+\addplot [black, mark=*] coordinates {(0,0) (0,1) (1,3) (2,2) (0,0)};
+
+\addplot [black, dashed, mark=none] coordinates {(0.666666,0) (0.666666,3.5)};
+\addplot [black, dashed, mark=none] coordinates {(0,1.5) (2.5,1.5)};
+
+% Shift of a half tick width
+\node[anchor=north east, xshift=-0.075cm, yshift=-0.075cm, dimmer] at (axis cs:0,0) {\(0\)};
+
+\node[anchor=east, xshift=-0.075cm, dimmer] at (axis cs:0,1.5) {\(\frac{3}{2}\)};
+\end{axis}

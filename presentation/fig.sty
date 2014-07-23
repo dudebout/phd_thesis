@@ -1,0 +1,152 @@
+\ProvidesPackage{fig}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\usetikzlibrary{arrows}
+\usetikzlibrary{matrix}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{automata}
+
+\pgfplotsset{compat=1.7}
+\pgfplotsset{every axis plot/.style={line width=0.8pt}} %thick
+
+\tikzset{
+  invisible/.style={opacity=0},
+  visible on/.style={alt=#1{}{invisible}},
+  alert on/.style={alt=#1{alert}{}},
+  normal on/.style={alt=#1{normal}{}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  },
+}
+
+% http://tex.stackexchange.com/questions/13793/beamer-alt-command-like-visible-instead-of-like-only
+% Detect mode. mathpalette is used to detect the used math style
+\newcommand<>\Alt[2]{%
+    \begingroup
+    \ifmmode
+        \expandafter\mathpalette
+        \expandafter\math@Alt
+    \else
+        \expandafter\make@Alt
+    \fi
+    {{#1}{#2}{#3}}%
+    \endgroup
+}
+
+
+
+% Un-brace the second argument (required because \mathpalette reads the three arguments as one
+\newcommand\math@Alt[2]{\math@@Alt{#1}#2}
+
+% Set the two arguments in boxes. The math style is given by #1. \m@th sets \mathsurround to 0.
+\newcommand\math@@Alt[3]{%
+    \setbox\z@ \hbox{$\m@th #1{#2}$}%
+    \setbox\@ne\hbox{$\m@th #1{#3}$}%
+    \@Alt
+}
+
+% Un-brace the argument
+\newcommand\make@Alt[1]{\make@@Alt#1}
+
+% Set the two arguments into normal boxes
+\newcommand\make@@Alt[2]{%
+    \sbox\z@ {#1}%
+    \sbox\@ne{#2}%
+    \@Alt
+}
+
+% Place one of the two boxes using \rlap and place a \phantom box with the maximum of the two boxes
+\newcommand\@Alt[1]{%
+    \alt#1%
+        {\rlap{\usebox0}}%
+        {\rlap{\usebox1}}%
+    \setbox\tw@\null
+    \ht\tw@\ifnum\ht\z@>\ht\@ne\ht\z@\else\ht\@ne\fi
+    \dp\tw@\ifnum\dp\z@>\dp\@ne\dp\z@\else\dp\@ne\fi
+    \wd\tw@\ifnum\wd\z@>\wd\@ne\wd\z@\else\wd\@ne\fi
+    \box\tw@
+}
+
+
+% http://tex.stackexchange.com/questions/137253/path-terminating-on-a-node-with-draw-double
+\tikzoption{double distance}{%
+  \pgfmathsetlength{\pgf@x}{#1}%
+  \edef\tikz@double@setup{%
+    \pgf@x=\the\pgf@x%
+    \advance\pgf@x by2\pgflinewidth%
+    \pgflinewidth=\pgf@x%
+    \noexpand\pgfsetlinewidth{\pgflinewidth}%
+    \noexpand\pgfsetinnerlinewidth{\the\pgf@x}%
+  }%
+  \pgfset{outer sep/.expand once=#1*0.5+\pgflinewidth}%
+  \tikzset{double}}
+
+
+\colorlet{cC}{darkgray}
+\colorlet{fF}{lightgray}
+\colorlet{dD}{mediumgray}
+\tikzset{normal/.code={\colorlet{cC}{darkgray}\colorlet{fF}{lightgray}\colorlet{dD}{mediumgray}}}
+
+\tikzset{every path/.append style={line width=0.6pt}} % semi thick
+\tikzset{every path/.append style={color = cC}}
+
+
+\tikzset{box/.style={draw=cC, fill=fF}}
+
+\tikzset{alert/.code={\colorlet{cC}{darkgreen}\colorlet{fF}{lightgreen}\colorlet{dD}{darkgreen!50}}}
+
+\usetikzlibrary{trees}
+\usetikzlibrary{intersections}
+\usetikzlibrary{positioning}
+
+\tikzset{full dynamic/.style={box, minimum width = 40pt, minimum height=40pt}}
+\tikzset{dynamic/.style={full dynamic, double distance = 1.2pt, box, double=dD}}
+\tikzset{strategy/.style={box, rounded corners, minimum width = 20pt, minimum height=40pt}}
+\tikzset{markov strategy/.style={strategy, sharp corners}}
+\tikzset{observation/.style={box, minimum width = 40pt, minimum height=20pt}}
+\tikzset{predictor/.style={observation}}
+\tikzset{model/.style={dynamic, minimum height = 20pt}}
+\tikzset{nature/.style={box, noisy, minimum width = 40pt, minimum height = 40pt}}
+\tikzset{system/.style={minimum width = 60pt, minimum height=20pt, shape=signal, fill=cC, text=fF}}
+\tikzset{system connection/.style={densely dotted}}
+\tikzset{dimmer/.style={cC!60}}
+\tikzset{translucent/.style={black!30}}
+\tikzset{shaded/.style={fill=black!10}}
+\tikzset{connection/.style={circle, fill=cC, inner sep = 0, outer sep = -1pt, minimum size = 2pt}}
+\tikzset{measurement/.style={circle, dimmer, draw, fill=white, inner sep = 0, minimum size = 2pt}}
+\tikzset{crossing/.style={fill=white, minimum width = 2pt + \pgflinewidth, inner sep=0pt}}
+\tikzset{noisy/.style={circle,
+                       decorate,
+                       decoration={random steps,
+                                   segment length=2pt,
+                                   amplitude=2pt}}}
+
+\def\sglinecolor{black!60}
+
+
+\newcommand{\muparameter}{}
+\newcommand{\sigmaparameter}{}
+\newcommand{\agparameter}{}
+
+\newcommand*{\circleintersections}[2]{
+\fill [fill=darkgreen, name intersections={of=#1 and #2, name=i, total=\t}]
+  \foreach \s in {1,...,\t}
+    {(i-\s) circle (2pt)};
+}
+
+\newcommand*{\connectintersections}[2]{
+\circleintersections{#1}{#2}
+\draw [color=darkgreen, name intersections={of=#1 and #2, name=i, total=\t}, line width=1.6pt, line cap=round]
+  (i-1) \foreach \s in {2,...,\t} {-- (i-\s)
+};
+}
+
+% Fixes a bug in the fit library throwing underfull box errors
+% http://tex.stackexchange.com/questions/61064/badbox-from-pgf-layer-using-fit
+% http://tex.stackexchange.com/questions/85285/cant-get-rid-of-strange-underfull-hbox-with-tikz-fit-library
+\tikzstyle{every fit} += [text badly centered]

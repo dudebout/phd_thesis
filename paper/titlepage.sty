@@ -1,0 +1,107 @@
+\ProvidesPackage{titlepage}
+
+\RequirePackage{sectsty}
+\chapterfont{\raggedleft}
+
+\newcommand{\frontpage}[1]{
+  \thispagestyle{empty}
+  {
+    \raggedleft
+    #1\par
+  }
+  \cleardoublepage
+}
+
+\newcommand{\singlelinepage}[1]{
+\frontpage{
+\vspace*{\stretch{1}}
+#1
+\vspace*{\stretch{2}}
+}
+}
+
+\newcommand{\epigraph}[2]{%
+  \gdef\@epigraph@content{#1}
+  \gdef\@epigraph@author{#2}
+}
+
+\def\@copyright{%
+\newpage
+\thispagestyle{empty}
+{
+  \raggedright
+  \vspace*{\stretch{1}}
+  \copyright{} 2014 Nicolas Dudebout.
+  \par
+}
+}
+
+\def\maketitle{%
+\frontpage{
+{\titlefont\huge\textbf{\@title}}
+
+\vfill
+
+A Thesis\\
+Presented to\\
+the Academic Faculty\\
+\bigskip
+by\\
+\bigskip
+\@author
+
+\vfill
+
+In Partial Fulfillment of\\
+the Requirements for the Degree\\
+Doctor of Philosophy\\
+in\\
+Electrical and Computer Engineering\\
+
+\vfill
+
+School of Electrical and Computer Engineering\\
+Georgia Institute of Technology\\
+\@date
+}
+
+
+\frontpage{
+{\titlefont\huge\textbf{\@title}}
+
+\vfill
+
+Approved by: \\
+\bigskip
+Professor Jeff Shamma, Advisor \\
+School of Electrical and Computer Engineering \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+Professor Éric Féron, Co-advisor \\
+School of Aerospace Engineering \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+Professor Fumin Zhang \\
+School of Electrical and Computer Engineering \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+Professor Spiridon Reveliotis \\
+School of Industrial and Systems Engineering \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+Professor Maria-Florina Balcan \\
+School of Computer Science \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+Professor Yorai Wardi \\
+School of Electrical and Computer Engineering \\
+\emph{Georgia Institute of Technology} \\
+\bigskip
+\bigskip
+April 14, 2014
+}
+
+\singlelinepage{\emph{\@epigraph@content}\\--\@epigraph@author}
+
+\singlelinepage{\emph{\@dedication}}
+}

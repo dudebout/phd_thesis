@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+
+\matrix (m) [matrix of math nodes, column sep = 35pt, nodes={anchor = center}, alternate rows, time line]
+{
+|[alias=z]| z\Tt &                                          &                                                  & |[alias=zP]| z\Tp \drawn m \of{z\Tt, a\Tt, s\Tt, x\Tp} \\
+                 & |[alias=s]| s\Tt \drawn \mu \of{z\Tt}    &                                                  &                                                        \\
+|[alias=x]| x\Tt &                                          & |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt, s\Tt} &                                                        \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{h\Tt} &                                                  &                                                        \\
+|[alias=h]| h\Tt &                                          &                                                  & |[alias=hP]| h\Tp = \tuple{h\Tt, a\Tt, s\Tt, x\Tp}     \\
+};
+
+\draw [dependency] (z)  -- (zP);
+\draw [dependency] (z)  -- (s);
+
+\draw [dependency] (s)  -- (zP);
+\draw [dependency] (s)  -- (xP);
+\draw [dependency] (s)  -- (hP);
+
+\draw [dependency] (x)  -- (xP);
+
+\draw [dependency] (xP) -- (zP);
+\draw [dependency] (xP) -- (hP);
+
+\draw [dependency] (a)  -- (xP);
+\draw [dependency] (a)  -- (zP);
+\draw [dependency] (a)  -- (hP);
+
+\draw [dependency] (h)  -- (a);
+\draw [dependency] (h)  -- (hP);
+
+\end{tikzpicture}

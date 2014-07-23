@@ -1,0 +1,30 @@
+\begin{axis}[
+xmin=0,
+ymin=0,
+xmax=1,
+ymax=1,
+ticks=none,
+domain=0:1,
+samples=100,
+axis equal image,
+axis line style=dimmer,
+ticklabel style=dimmer,
+label style=dimmer,
+]
+
+\addplot[name path=id, draw=none] coordinates {(0,0) (1,1)};
+
+\addplot[name path=f, solid] {9.25 * x^3 - 2 * x^2 + 0.2 - 6.75 * x^4};
+
+\coordinate (origin) at (0,0);
+\coordinate (unit) at (axis cs:1,1);
+
+\node {};
+
+\circleintersections{f}{id}
+
+\end{axis}
+
+\begin{pgfonlayer}{background}
+\draw [dimmer] (origin) -- (unit);
+\end{pgfonlayer}

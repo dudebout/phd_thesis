@@ -1,0 +1,24 @@
+\node [full dynamic] (f) {\(f\)};
+\coordinate [left = of f] (f_in);
+\coordinate [right = of f] (f_out);
+\node [right = of f_out] (f_explain) {\(y\nxt \drawn f \of{x}\)};
+\draw [->] (f_in) -- node [above] {\(x\)} (f);
+\draw [->] (f) -- node [above] {\(y\)} (f_out);
+
+\pause
+
+\node [below = of f, strategy, minimum width=40pt] (g) {\(g\)};
+\coordinate [left = of g] (g_in);
+\coordinate [right = of g] (g_out);
+\node [right = of g_out] (g_explain) {\(y\Tp \drawn g \of{\seqcom{x}{\tm}{1}{t},\seqcom{y}{\tm}{1}{t}}\)};
+\draw [->] (g_in) -- node [above] {\(x\)} (g);
+\draw [->] (g) -- node [above] {\(y\)} (g_out);
+
+\pause
+
+\node [below = of g, dynamic] (h) {\(h\)};
+\coordinate [left = of h] (h_in);
+\coordinate [right = of h] (h_out);
+\node [right = of h_out] (h_explain) {\(y\nxt \drawn h \of{y, x}\)};
+\draw [->] (h_in) -- node [above] {\(x\)} (h);
+\draw [->] (h) -- node [above] {\(y\)} (h_out);

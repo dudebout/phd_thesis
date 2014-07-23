@@ -1,0 +1,57 @@
+\tikzset{node distance = 0.4cm and 0.4cm} % the first value is unused
+\tikzset{underbrace/.style={decorate, decoration = {brace, mirror, raise = 0.2cm}, every node/.style = {below, yshift=-.4cm}}}
+\tikzset{overbrace/.style={decorate, decoration = {brace, raise = 0.2cm}, every node/.style = {above, yshift=.4cm}}}
+
+\tikzset{dice/.style={draw, rounded corners, matrix of nodes, nodes in empty cells, row sep = 2pt, column sep = 2pt, outer sep = 2pt, every node/.style={inner sep = 4pt}}}
+\newcommand{\D}{\node [fill] {};}
+
+\node [name = agents] {};
+
+\matrix [dice, name = one, right = of agents] {
+ &    & \\
+ & \D & \\
+ &    & \\
+};
+
+\matrix [dice, name = two, right = of one] {
+   &  & \D \\
+   &  &    \\
+\D &  &    \\
+};
+
+\matrix [dice, name = three, right = of two] {
+   &    & \D \\
+   & \D &    \\
+\D &    &    \\
+};
+
+\matrix [dice, name = four, right = of three] {
+\D &  & \D \\
+   &  &    \\
+\D &  & \D \\
+};
+
+\matrix [dice, name = five, right = of four] {
+\D &    & \D \\
+   & \D &    \\
+\D &    & \D \\
+};
+
+\matrix [dice, name = six, right = of five] {
+\D &  & \D \\
+\D &  & \D \\
+\D &  & \D \\
+};
+
+\draw [overbrace] (one.north west) -- node (s-1-1) {Low} (three.north east);
+\draw [overbrace] (four.north west) -- node (s-1-2) {High} (six.north east);
+
+\draw [underbrace] (one.south west) -- node (s-2-1) {Small} (two.south east);
+\draw [underbrace] (three.south west) -- node (s-2-2) {Medium} (four.south east);
+\draw [underbrace] (five.south west) -- node (s-2-3) {Large} (six.south east);
+
+\node [fit = (one) (six) (s-1-1) (s-1-2)] (sigs1) {};
+\node [above = of sigs1] {Signal \(s\one\) for agent~\(1\)};
+
+\node [fit = (one) (six) (s-2-1) (s-2-2) (s-2-3)] (sigs2) {};
+\node [below = of sigs2] {Signal \(s\two\) for agent~\(2\)};

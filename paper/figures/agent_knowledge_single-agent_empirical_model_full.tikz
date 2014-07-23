@@ -1,0 +1,18 @@
+\matrix [information flow, column sep = 20pt, even rows readability guides]
+{
+|[alias=x]| x\ag{\agparameter}\Tt &                                                                                                                    & |[alias=xP]| x\ag{\agparameter}\Tp \drawn f\ag{\agparameter} \of{x\ag{\agparameter}\Tt, a\ag{\agparameter}\Tt, s\ag{\agparameter}\Tp} &[-50pt]                                                                                                                                                         \\
+                                  & |[alias=a]| a\ag{\agparameter}\Tt \drawn \sigma\ag{\agparameter} \of{x\ag{\agparameter}\Tt, z\ag{\agparameter}\Tt} &                                                                                                                                       &                                                                                                                                                         \\
+                                  & |[alias=sP]| s\ag{\agparameter}\Tp \drawn \mu\ag{\agparameter} \of{z\ag{\agparameter}\Tt}                          &                                                                                                                                       &                                                                                                                                                         \\
+|[alias=z]| z\ag{\agparameter}\Tt &                                                                                                                    &                                                                                                                                       & |[alias=zP]| z\ag{\agparameter}\Tp = m\ag{\agparameter} \of{z\ag{\agparameter}\Tt, x\ag{\agparameter}\Tp, a\ag{\agparameter}\Tt, s\ag{\agparameter}\Tp} \\
+};
+
+\draw [dependency] (sP.5)   -- (xP.190);
+\draw [dependency] (sP.355) -- (zP.176);
+\draw [dependency] (z)      -- (zP);
+\draw [dependency] (z.30)   -- (a.185);
+\draw [dependency] (z.15)   -- (sP.west);
+\draw [dependency] (a.5)    -- (xP.185);
+\draw [dependency] (x)      -- (xP);
+\draw [dependency] (x)      -- (a.175);
+\draw [dependency] (a.355)  -- (zP.172);
+\draw [dependency] (xP.350) -- (zP.90);

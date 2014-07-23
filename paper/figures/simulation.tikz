@@ -1,0 +1,26 @@
+\pgfplotstableread{\tabledata}{\simulationdata}
+\begin{axis}[
+width=\figureswidth,
+height=\figuresheight,
+xlabel=Time \(t\),
+ylabel=Prediction \ylabelsymbol,
+ymin=0,
+ymax=1,
+xmin=0,
+xmax=100,
+xtick={100},
+ytick={1},
+legend entries={\(i = 1\), \(i = 2\)},
+legend style={draw=none},
+axis line style=dimmer,
+label style=dimmer,
+ticklabel style=dimmer,
+tick style=dimmer,
+],
+\addplot[thick, solid] table [x={time}, y={phigh1}] {\simulationdata};
+\addplot[thick, dashed] table [x={time}, y={phigh2}] {\simulationdata};
+
+\node[anchor=north east] (origin) at (axis cs:0,0) {\(0\)};
+\end{axis}
+
+\node [dimmer] at (origin) {\(0\)};

@@ -1,0 +1,39 @@
+\node [draw, double, minimum width = 40pt, minimum height=40pt] (f) {\(f\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = 60pt of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = 60pt of x1] (x2);
+
+\node [draw, noisy, minimum width = 40pt, minimum height = 40pt, above = 60pt of f] (nature) {Nature};
+
+\draw [->] (a1) -- node [above] {\(a\)} (a2);
+\draw [->] (x1) -- node [below] {\(x\)} (x2);
+\draw [->] (nature) -- node [measurement] (s1) {} node [right] {\(s\)} (f);
+
+\path let
+  \p1 = (a1),
+  \p2 = (s1)
+in
+  coordinate (s2) at (\x1, \y2);
+
+\path (s1) -- node [draw, double, minimum width = 40pt, minimum height = 20pt] (m) {\(m\K\)} (s2);
+\draw [->] (s1) -- (m);
+\draw [->] (m) -- node [measurement] {} node [below] (z) {\(z\)} (s2);
+
+\path let
+  \p1 = (m.north),
+  \p2 = (f.south),
+  \p3 = (x2)
+in
+  node [inner sep = 0pt] at ($ (\x3, \y1) - (40pt + 2\pgflinewidth, \pgflinewidth) $) (sigma1) {}
+  node [inner sep = 0pt] at ($ (\x3, \y2) + (-2\pgflinewidth, \pgflinewidth) $) (sigma2) {};
+
+
+\node [draw, fit = (sigma1) (sigma2), inner sep = 0pt] {\(\sigma\param{\sigmaparameter}\)};
+
+\begin{pgfonlayer}{background}
+  \node [translucent, draw, shaded, left = of nature] (mu) {\color{black} \(\mu\param{\muparameter} \of {z} \elmt{s\nxt} = \probacond{s\nxt}{z}\)};
+  \draw [->, dimmer] (z.north) to [bend left = 10] (mu.342);
+  \draw [->, dimmer] (s1) to [bend right = 20] (mu.east);
+\end{pgfonlayer}

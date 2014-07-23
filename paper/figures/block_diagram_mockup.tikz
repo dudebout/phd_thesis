@@ -1,0 +1,9 @@
+\node [draw, double, minimum width = 40pt, minimum height=20pt] (m) {\(m\K\)};
+
+\coordinate (s2) at (m.north);
+\coordinate [above = of s2] (s1);
+\coordinate (z1) at (m.south);
+\coordinate [below = of z1] (z2);
+
+\draw [->] (s1) -- node [right] {\(s\)} (s2);
+\draw [->] (z1) -- node [right] {\(z\)} (z2);

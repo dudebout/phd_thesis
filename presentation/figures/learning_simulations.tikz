@@ -1,0 +1,26 @@
+\pgfplotstableread{\tabledata}{\simulationdata}
+\begin{axis}[
+xlabel=Round \(r\),
+ylabel=\(\probaof{\text{High}}\),
+ylabel style={rotate=-90},
+ymin=0,
+ymax=1,
+xmin=0,
+xmax=100,
+xtick={100},
+ytick={1},
+axis line style=dimmer,
+label style=dimmer,
+ticklabel style=dimmer,
+tick style=dimmer,
+],
+\addplot[thick, solid] table [x={time}, y={phigh1}] {\simulationdata};
+\addplot[thick, dashed] table [x={time}, y={phigh2}] {\simulationdata};
+
+\node[anchor=north east] (origin) at (axis cs:0,0) {\(0\)};
+
+\node[anchor=north west] at (axis cs:3,0.95) {\(\mu\one\tm{r}\)};
+\node[anchor=south west] at (axis cs:3,0.05) {\(\mu\two\tm{r}\)};
+\end{axis}
+
+\node [dimmer] at (origin) {\(0\)};

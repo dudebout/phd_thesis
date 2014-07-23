@@ -1,0 +1,17 @@
+\ProvidesPackage{acrn}
+
+\RequirePackage[nomain,acronym,section,shortcuts]{glossaries}
+\RequirePackage{ddbglossaries}
+
+\makeglossaries
+\renewcommand*{\glsgroupskip}{}
+\renewcommand*{\glspostdescription}{}
+
+\newacronym[acronymarticle=an, definitionarticle=an]{ode}{ODE}{ordinary differential equation}
+\newacronym[longplural=analogy-based expectation equilibria]{abee}{ABEE}{analogy-based expectation equilibrium}
+\newacronym[longplural=mean-field equilibria]{mfe}{MFE}{mean-field equilibrium}
+\newacronym[longplural=empirical-evidence equilibria, acronymarticle=an, definitionarticle=an]{eee}{EEE}{empirical-evidence equilibrium}
+\newacronym[longplural=empirical-evidence optima, acronymarticle=an, definitionarticle=an]{eeo}{EEO}{empirical-evidence optimum}
+\newacronym[longplural=Markov decision processes, acronymarticle=an]{mdp}{MDP}{Markov decision process}
+\newacronym[longplural=partially observable Markov decision processes]{pomdp}{POMDP}{partially observable Markov decision process}
+\newacronym[longplural=exogenous empirical-evidence equilibria, acronymarticle=an, definitionarticle=an]{xeee}{xEEE}{exogenous empirical-evidence equilibrium}

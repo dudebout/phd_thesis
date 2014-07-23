@@ -1,0 +1,37 @@
+\matrix [information flow, column sep = 12pt, even rows readability guides]
+{
+|[alias=z2]| z\two\Tt &                                                                 &[-36pt]                                                                              &[-36pt]                                                              &                                                                       & |[alias=z2P]| z\two\Tp \drawn m\two \of{z\two\Tt, x\two\Tp, a\two\Tt, s\two\Tp} \\
+                      & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{x\two\Tt, z\two\Tt} &                                                                              &                                                              &                                                                       &                                                                                 \\
+|[alias=x2]| x\two\Tt &                                                                 &                                                                              &                                                              & |[alias=x2P]| x\two\Tp \drawn f\two \of{x\two\Tt, a\two\Tt, s\two\Tp} &                                                                                 \\
+|[alias=w]| w\Tt      &                                                                 & |[alias=wP]| w\Tp \drawn n \of{w\Tt, x\one\Tt, x\two\Tt, a\one\Tt, a\two\Tt} &                                                              &                                                                       &                                                                                 \\
+                      &                                                                 &                                                                              & |[alias=sP]| \tuple{s\one\Tp, s\two\Tp} \drawn \nu \of{w\Tp} & |[alias=s2z1p]|                                                       &                                                                                 \\
+|[alias=x1]| x\one\Tt &                                                                 &                                                                              &                                                              & |[alias=x1P]| x\one\Tp \drawn f\one \of{x\one\Tt, a\one\Tt, s\one\Tp} &                                                                                 \\
+                      & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{x\one\Tt, z\one\Tt} &                                                                              &                                                              &                                                                       &                                                                                 \\
+|[alias=z1]| z\one\Tt &                                                                 &                                                                              &                                                              &                                                                       & |[alias=z1P]| z\one\Tp \drawn m\one \of{z\one\Tt, x\one\Tp, a\one\Tt, s\one\Tp} \\
+};
+
+\draw [dependency]            (w)       -- (wP);
+\draw [dependency]            (wP.east)  -- (sP.90);
+\draw [dependency, emphasize] (sP.355)  -- (x1P.175);
+\draw [dependency]            (a1.5)    -- (wP.270);
+\draw [dependency, emphasize] (sP.east) -- (s2z1p.east) to [bend left = 25]  (z1P.160);
+\draw [dependency, emphasize] (z1)      -- (z1P);
+\draw [dependency, emphasize] (z1.20)   -- (a1.190);
+\draw [dependency, emphasize] (a1.east) -- (x1P.185);
+\draw [dependency, emphasize] (x1)      -- (x1P);
+\draw [dependency, emphasize] (x1.340)  -- (a1.170);
+\draw [dependency, emphasize] (a1.355)  -- (z1P.176);
+\draw [dependency, emphasize] (x1P.355) -- (z1P.171);
+\draw [dependency]            (x1.20)   -- (wP.185);
+
+\draw [dependency] (sP.10)  -- (x2P.185);
+\draw [dependency]            (a2.355)    -- (wP.90);
+\draw [dependency] (sP.5) to [bend right = 20]  (z2P.200);
+\draw [dependency] (z2)      -- (z2P);
+\draw [dependency] (z2.340)   -- (a2.170);
+\draw [dependency] (a2.east) -- (x2P.175);
+\draw [dependency] (x2)      -- (x2P);
+\draw [dependency] (x2.20)  -- (a2.190);
+\draw [dependency] (a2.5)  -- (z2P.184);
+\draw [dependency] (x2P.5) -- (z2P.189);
+\draw [dependency]            (x2.340)   -- (wP.175);

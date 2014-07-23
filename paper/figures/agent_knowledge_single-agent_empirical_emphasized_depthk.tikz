@@ -1,0 +1,20 @@
+\matrix [information flow, column sep = 12pt, odd rows readability guides]
+{
+|[alias=x]| x\Tt &                                                & |[alias=a2xP]|                                   &                                        & |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt, s\Tp} \\
+                 &                                                &                                                  & |[alias=sP]| s\Tp \drawn \nu \of{w\Tp} &                                                  \\
+|[alias=w]| w\Tt &                                                & |[alias=wP]| w\Tp \drawn n \of{w\Tt, x\Tt, a\Tt} &                                        &                                                  \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{x\Tt, z\Tt} &                                                  &                                        &                                                  \\
+|[alias=z]| z\Tt &                                                &                                                  &                                        & |[alias=zP]| z\Tp = m\K \of{z\Tt, s\Tp}          \\
+};
+
+\draw [dependency]            (w)                                        -- (wP);
+\draw [dependency]            (wP.5)                                     -- (sP.185);
+\draw [dependency, emphasize] (sP.5)                                     -- (xP.186);
+\draw [dependency]            (a.5)                                      -- (wP.185);
+\draw [dependency, emphasize] (sP.355)                                   -- (zP.172);
+\draw [dependency, emphasize] (z)                                        -- (zP);
+\draw [dependency, emphasize] (z.20)                                     -- (a.190);
+\draw [dependency, emphasize] (a.12) [bend left=35] to (a2xP.south east) -- (xP.184);
+\draw [dependency, emphasize] (x)                                        -- (xP);
+\draw [dependency, emphasize] (x)                                        -- (a.170);
+\draw [dependency] (x.355)                                               -- (wP.175);

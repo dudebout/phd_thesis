@@ -1,0 +1,13 @@
+\matrix [information flow, column sep = 35pt, odd rows readability guides]
+{
+                 & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{h\Tt} &                                                      \\
+|[alias=h]| h\Tt &                                                   & |[alias=hP]| h\Tp = \tuple{h\Tt, a\one\Tt, a\two\Tt} \\
+                 & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{h\Tt} &                                                      \\
+};
+
+\draw [dependency] (h)      -- (hP);
+\draw [dependency] (h)      -- (a1.west);
+\draw [dependency] (a1.east)    -- (hP.170);
+
+\draw [dependency] (h)      -- (a2.west);
+\draw [dependency] (a2.east)  -- (hP.190);

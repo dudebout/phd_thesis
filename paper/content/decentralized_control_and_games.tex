@@ -1,0 +1,242 @@
+\section{Decentralized Control through Learning in Stochastic Games}
+
+A complex system is a set of agents connected through a network.
+The subsystems of a car, a robotic plant, and the power grid are examples of complex systems at different scales.
+The advances in information technology made these complex systems ubiquitous, and tools to control them are needed.
+These systems can be controlled in a centralized fashion.
+However, a centralized controller represents a single point of failure, does not scale to large networks, and incurs high communication costs.
+Adaptive decentralized controllers address these problems.
+A controller is decentralized if each agent in the system makes some decisions.
+Decentralization renders the system more robust by not having a single point of failure.
+A controller is adaptive in the sense of~\cite{hart_mas-colell:2000:general,hart_mas-colell:2000:simple} if each agent is doing simple computations using local information.
+Adaptivity mitigates the scalability and communication issues.
+
+In optimal control, centralized controllers are the optima of a function.
+Unfortunately, in the multiagent setting, the notion of optimality is ill defined.
+Game theory, the study of interacting decision makers, addresses this issue by replacing optima with equilibria.
+An equilibrium is a joint decision satisfying all the agents at once; at equilibrium, no agent has an incentive to unilaterally deviate.
+In a game-theoretic approach, decentralized controllers are equilibria of a game.
+
+Equilibria can be computed by a centralized algorithm.
+However, this centralized approach brings back the issue of scalability and prevents the addition of new agents without designing a new controller.
+Game-theoretic learning enables the decentralized computation of equilibria.
+Each agent modifies its strategy according to a learning rule using local information.
+The learning rules used by the agents are chosen to guarantee convergence to an equilibrium.
+Game-theoretic learning is an adaptive decentralized approach to designing adaptive decentralized controllers.
+
+Engineering problems often involve dynamical systems with a state, such as \acp{mdp}.
+When the decision maker cannot observe the state directly it is facing a \ac{pomdp}.
+Solving an \ac{mdp} is tractable for reasonable sizes of the state space, whereas solving a \ac{pomdp} is intractable.
+Stochastic games extend these processes to the multiagent case.
+In a complex system, agents only observe local information.
+Therefore, the games used to control these systems are stochastic games of imperfect information.
+These games are, like \acp{pomdp}, intractable.
+To this day, there exists no centralized algorithm nor learning rule for computing equilibria in stochastic games.
+
+The full-rationality requirement of game theory is in part to blame for this lack of results.
+Full rationality requires agents to have perfect understanding of the game being played.
+This requirement is not realistic for engineered agents which have, by nature, bounded rationality.
+This research uses bounded rationality to make each agent face an \ac{mdp} instead of a \ac{pomdp}.
+
+The rest of this chapter introduces work paving the way towards using game-theoretic learning to design decentralized controllers.
+These results are grouped under three main themes: learning in games, equilibria in repeated games, and bounded rationality.
+
+\section{Learning in Games}
+As previously mentioned, Nash equilibria are self-enforcing agreements.
+Learning studies the question of how agents reach such an agreement.
+Learning in the economics literature tries to explain behaviors observed in experiments; the authors look for simple rules human decision makers likely use.
+The ensuing debate concerning the validity of learning algorithms for human decision makers is irrelevant for this research.
+
+In the learning framework, a game is played repeatedly at discrete time steps.
+Agents use strategies to choose their actions.
+At a given time step, an agent plays an action and receives a signal.
+This signal is most of the time the joint action.
+The agent then updates its strategy depending on the received signal.
+The update rule is called a learning algorithm.
+The goal is to define learning algorithms making the joint action converge to a Nash equilibrium~\cite{fudenberg_levine:1998}.
+
+A learning algorithm is composed of the three following components:
+\begin{itemize}
+\item Information accumulation
+\item Optimization of a function constructed from that information
+\item Randomization to avoid being trapped in local optima
+\end{itemize}
+Randomization commonly takes the form of smoothing; instead of playing a best response, an agent plays a mixed action favoring the best response and putting a small probability on other actions.
+A learning algorithm is called adaptive if the information is accumulated locally and the optimization is an easy computational task.
+In economics, the easiness of a computational task is defined with human decision makers in mind.
+In this research, the easiness is defined for an engineered decision maker; for example, computing the eigenvectors of a medium size matrix is considered an easy computational task.
+Adaptivity is an important characteristic of learning algorithms for scaling.
+
+Fictitious play is an example of an adaptive learning algorithm.
+In fictitious play, agents keep track of the empirical frequencies of the actions played by their opponents.
+At each time step, an agent plays a best response to the mixed action induced by these empirical frequencies of play.
+Information is accumulated through the empirical frequencies.
+Optimization takes the form of playing a best response.
+Smooth fictitious play is a variant incorporating the randomization component.
+
+Unfortunately, fictitious play does not always converge to a Nash equilibrium~\cite{shapley:1963}.
+In fact, no adaptive learning rule converges to Nash equilibria for all games~\cite{hart_mas-colell:2003}.
+This result is in part due to the fact that computing a Nash equilibrium is PPAD complete~\cite{daskalakis_goldberg_papadimitriou:2006}.
+PPAD, which stands for Polynomial Parity Arguments on Directed graphs, is a complexity class contained between P and NP.
+PPAD complete problems are believed to be hard to solve but the exact relationship to P and NP is not known.
+
+Three approaches to designing simple convergent algorithms are presented below.
+One considers correlated equilibria with a weaker notion of convergence, another focuses on the class of weakly-acyclic games, and the last one uses the less constraining solution concept of stochastically stable states.
+
+\subsection{Correlated Equilibria}
+Hart and Mas-Colell proved that a family of adaptive learning rules converge to the set of correlated equilibria~\cite{hart_mas-colell:2000:simple,hart_mas-colell:2000:general,hart_mas-colell:2001}.
+These algorithms rely on the notion of regret.
+A regret measures the payoff difference between two actions.
+Formally, the regret for playing~\(a\) instead of~\(a'\) is the average increase in payoff the agent would have received, had it replaced every play of~\(a\) by~\(a'\).
+The optimization step seeks to minimize the regrets.
+As a result, the family of algorithms is called no regret.
+The guaranteed convergence of these algorithms comes not only from the simpler equilibrium concept but also from the use of a looser notion of convergence on a different quantity.
+Indeed, no-regret algorithms guarantee the convergence of the empirical distribution of play to the set of correlated equilibria.
+Note that the empirical distribution of play~\(\frac{1}{t} \sum\idxfromto{\tau}{1}{t} a\tm{\tau}\) is different from the joint action~\(a\Tt\) and that convergence to a set is less constraining than convergence to a point.
+
+\subsection{Weakly Acyclic Games}
+A game is weakly acyclic if from any joint action there exists a better-reply path ending at some pure Nash equilibrium.
+This structure on the utility functions, introduced by Young~\cite{young:1998}, insures that better-reply learning
+algorithms converge to a Nash equilibrium in weakly acyclic games~\cite{young:2004}.
+Weakly acyclic games are an extension of potential games, a class of games used to model congestion problems and to systematically design decentralized controllers~\cite{li_marden:2011}.
+
+\subsection{Stochastically Stable States}
+Young introduced the notion of stochastically stable states to characterize the long-run behavior of a Markov chain subject to a diminishing random noise~\cite{young:1993}.
+A state is stochastically stable if it is visited infinitely often as the noise fades.
+Learning in this context is different from learning an equilibrium.
+Agents should, as a whole, make the noise fade in a way guaranteeing that the stochastically stable states of the system are the desirable ones.
+This notion of stability was used to control wind farms~\cite{marden_young_pao:2012}, to characterize the yield of self-assembly mechanisms~\cite{fox_shamma:2011:self-assembly}, and to study language evolution~\cite{fox_shamma:2011:language}.
+
+\section{Equilibria in Repeated Games}
+
+This section presents results pertaining to repeated games.
+The first result extends the parallel existing between~\acp{mdp} and repeated games by adapting reinforcement learning to a multiagent setting.
+The next three results are equilibrium concepts lowering the requirements on the beliefs imposed by sequential rationality.
+
+\subsection{Multiagent Reinforcement Learning}
+Hu and Wellman attempted to apply results from reinforcement learning to the multiagent setting with the Nash--\(Q\)-learning algorithm~\cite{hu_wellman:2003}.
+In stochastic games, it is unfortunately not enough to balance exploration and exploitation.
+The Nash--\(Q\)-learning algorithm requires the agents to keep track of action-value functions for their opponents and to play Nash-equilibrium strategies.
+This approach is computationally expensive and only yields results for agents with identical or opposite utility functions.
+
+When agents have identical utility functions, the problem is identical to a single-agent problem.
+Therefore, classical reinforcement-learning results carry over.
+When agents have opposite utility functions, they are facing a zero-sum game.
+In a zero-sum game, one can define \emph{the} solution by using the minimax theorem.
+The lack of ambiguity in defining rational solution concepts explains the convergence.
+
+\subsection{Subjective and Self-confirming Equilibria}
+Subjective equilibria, introduced by Kalai and Lehrer, lower the requirements on the beliefs in repeated games~\cite{kalai_lehrer:1993:subjective}.
+They only require the beliefs to be correct on the path of play.
+Self-confirming equilibria, introduced by Fudenberg and Levine, are a closely related concept~\cite{fudenberg_levine:1993}.
+In a self-confirming equilibrium an agent can hold the false belief that its opponents correlate their actions off the path of play.
+Agents playing a subjective or self-confirming equilibrium never see plays contradicting their beliefs.
+
+\newcommand{\belief}{^}
+Subjective and self-confirming equilibria are formally defined in terms of belief strategies.
+Belief strategy~\(\tilde{\sigma}\belief{i}\ag{j} \from \cH\ag{j} \to \distribover{\cA\ag{j}}\) is the strategy agent~\(i\) believes agent~\(j\) is playing.
+Agent~\(i\)'s belief is composed of one belief strategy for each agent~\(\tilde{\sigma}\belief{i} = \tuple{\seqcom{\tilde{\sigma}\belief{i}}{_}{1}{\card{\cI}}}\).
+In particular, its belief strategy for itself is its actual strategy~\(\tilde{\sigma}\belief{i}\Ii = \sigma\Ii\).
+
+A set of~\(\card{\cI}\) strategies, one per agent, induces a distribution over the possible histories.
+The histories having a positive probability of being visited are called the path of play.
+This set of strategies can be the actual strategies or the beliefs of one agent.
+Note that a distribution over beliefs also induces a distribution over the possible histories.
+
+Strategies~\(\sigma\) and beliefs~\(\tilde{\sigma}\) form a subjective equilibrium when the following two conditions hold for each agent~\(i\):
+\begin{itemize}
+\item Strategy~\(\sigma\Ii\) is a best response to the belief strategies~\(\tilde{\sigma}\belief{i}\mI\).
+\item Strategies~\(\sigma\) and strategies~\(\tilde{\sigma}\belief{i}\) induce the same distribution over the path of play.
+\end{itemize}
+
+Strategies~\(\sigma\) and distributions over beliefs~\(\tilde{\nu}\) form a self-confirming equilibrium when the following two conditions hold for each agent~\(i\):
+\begin{itemize}
+\item Strategy~\(\sigma\Ii\) is a best response to the distribution over belief strategies~\(\tilde{\nu}\belief{i}\mI\).
+\item Strategies~\(\sigma\) and the distribution over belief~\(\tilde{\nu}\belief{i}\) induce the same distribution over the path of play.
+\end{itemize}
+
+These two equilibrium concepts loosens the requirements of full rationality.
+Agents can be mistaken about events that will never happen.
+However, these concepts require each agent to be aware of the existence of every other agent.
+An agent needs to understand what its opponents actions and signals are to build belief strategies.
+It also needs to know the exact impact of its opponents actions to verify the optimality of its own strategy.
+Therefore, these two equilibrium concepts are only a first step towards the goal of this research.
+
+\subsection{Belief-free and Weakly Belief-free Equilibria}
+Belief-free equilibria and weakly belief-free equilibria are solution concepts for private-monitoring repeated games, presented in \cref{sec:private_monitoring}.
+They lower the rationality requirements by not requiring the agents to carry full beliefs about the state of their opponents.
+
+\subsection{Analogy-based Expectation Equilibria}
+For games of perfect information, Jehiel introduced the concept of \acp{abee} to keep the belief space size constant~\cite{jehiel:2005}.
+\acp{abee} can be expressed in terms of belief strategies.
+Each agent partitions the history set in a finite number of analogy classes.
+An analogy class for agent~\(i\) is denoted by~\(\kappa\Ii\) and the set of analogy classes by~\(\cK\Ii\).
+Each agent~\(i\) believes that its opponents' actions are fully determined by the analogy class; for two histories~\(h\) and~\(h'\) in the same analogy class~\(\kappa\Ii\) and for all agent~\(j\), \(\tilde{\sigma}\belief{i}\ag{j} \of{h} = \tilde{\sigma}\belief{i}\ag{j} \of{h'} = \alpha\belief{i,\kappa\Ii}\ag{j}\).
+The, potentially mixed, action~\(\alpha\belief{i, \kappa\Ii}\ag{j}\) is called an analogy-based belief.
+
+Strategies~\(\sigma\), analogy classes~\(\cK\), and analogy-based beliefs~\(\alpha\) form an \ac{abee} when the following two conditions hold for each agent~\(i\):
+\begin{itemize}
+\item Strategy~\(\sigma\Ii\) is a sequentially rational best response to the analogy-based beliefs~\(\alpha\belief{i}\mI\).
+\item For all agent~\(j\), the analogy-based belief~\(\alpha\belief{i}\ag{j}\) is consistent with~\(\sigma\ag{j}\), \ie, for all~\(\kappa\Ii\) in~\(\cK\Ii\) and~\(a\ag{j}\) in~\(\cA\ag{j}\), \(\alpha\belief{i, \kappa\Ii}\ag{j}\elmt{a\ag{j}} = \probacond{\sigma\ag{j} \of{h} = a\ag{j}}{h \in \kappa\Ii}\).
+\end{itemize}
+
+The \ac{abee} concept is a substantial step in the direction of this research.
+The perfect understanding required by full rationality is replaced by the notion of consistency.
+Beliefs are consistent if they are accurate on average even though they might be inexact upon closer inspection.
+This relaxation simplifies the problem that each agent is facing.
+However, each agent is still required to have a good understanding about the game being played and the role of its opponents.
+This research goes beyond this limitation by using consistency in a setup where agents do not need to know they are playing a game.
+The following section exposes other approaches using consistency.
+
+
+\section{Bounded Rationality and Consistency}
+
+In classical game theory, agents are assumed to be fully rational.
+Bounded rationality studies scenarios where agents have limited computation power or make mistakes~\cite{rubinstein:1998}.
+In the economics literature, bounded rationality is used to take into account human nature and to explain discrepancies with experiments.
+Fully rational agents can perfectly use any knowledge they have about the problem they face.
+For example, in a stochastic game of imperfect information, fully rational agents propagate beliefs accurately.
+Propagating beliefs means doing Bayesian inference on a belief space whose size increases with time.
+Engineered agents have limited computation power, limited memory, and bounded precision.
+Furthermore, adaptivity requires the use of local and therefore incomplete information.
+As a result, there is no hope to build fully rational adaptive agents in a dynamic world.
+In this research, the bounded rationality of engineered agents is used as an advantage.
+Instead of relying on propagation of beliefs regarding the imperfect information, simple consistent models are used.
+A model is consistent if the agent does not observe evidence contradicting it.
+
+Four approaches using bounded rationality to lower the complexity of the problem are presented below.
+The first one uses Kalman filtering to update a model while the others use the notion of consistency.
+All the consistency approaches use exogenous models, whereas this research lifts that restriction.
+Other differences with this research are highlighted.
+
+\subsection{Linear Modeling}
+Chang, Ho and Kaelbling used modeling to simplify multiagent learning~\cite{chang_ho_kaelbling:2004}.
+Each agent assumes that the signal received is generated from a linear system and uses Kalman filtering to get the best estimate of the current state.
+
+\subsection{Mean-field Games}
+Lasry and Lions studied a setting where a very large number of agents faces identical copies of an \ac{mdp}~\cite{lasry_lions:2007}.
+The \acp{mdp} are coupled through a common signal received by the agents.
+This signal is the proportion of agents in each state; it is a stochastic process impacted by the strategies of all the agents.
+Agents compute their optimal strategies by considering a consistent, exogenous and stationary model of the signal.
+Agents are in a \ac{mfe} if their optimal strategies induce precisely this stationary signal.
+The goal of \acp{mfe} is to simplify the analysis of games with a very large number of agents.
+The main result in the \ac{mfe} literature is that when the number of agents goes to infinity, \acp{mfe} coincide with Nash equilibria.
+The fact that the signal is not truly stationary nor exogenous washes away when the number of agents is large.
+\acp{mfe} aim at simplifying the analysis of Nash equilibria for a specific game with a large number of players.
+This research aims for a different equilibrium concept in general games with any number of players.
+Furthermore, \acp{mfe} focuses on stationary models, whereas this research considers more elaborate models.
+Weintraub, Benkard, and van Roy applied the mean-field methodology to approximate subgame-perfect equilibria in a problem of dynamic imperfect competition~\cite{weintraub_benkard_van-roy:2008}.
+They named their equilibrium concept oblivious equilibrium.
+
+\subsection{Incomplete Theories}
+Eyster and Piccione analyzed a scenario in which traders have exogenous nonstationary consistent models of prices on the stock market; these models are called incomplete theories~\cite{eyster_piccione:2011}.
+The traders use their theories to acquire assets.
+The key result is that traders with more complete theories do not necessarily perform better.
+The main difference with this research is that, the actions of the traders do not influence prices.
+Therefore, prices are truly exogenous; traders do not need to update their models.
+
+\subsection{Egocentric Modeling}
+Seah and Shamma analyzed a specific game where two agents share a one-dimensional signal~\cite{seah_shamma:2008}.
+The signal is stochastic and influenced by the strategies of the agents.
+However, the agents model it with a consistent stationary exogenous model.
+Similarly, in this research, an inaccurate  simplified model is used to lower the complexity of computations.

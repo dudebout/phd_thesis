@@ -1,0 +1,19 @@
+\node [system] (r1) {};
+\node [system, left = 50pt of r1] (m1) {\(\rbM\one\)};
+\coordinate [left = 50pt of m1] (start1);
+\coordinate [right = 50pt of r1] (end1);
+
+\draw [system connection] (start1) -- node [above] {\(\mu\one\)} (m1);
+\draw [system connection] (m1) -- node [above] {\(\sigma\one\)} (r1);
+\draw [system connection] (r1) -- node [above] {\(\mu\one\)} (end1);
+
+\node [system, below = of r1] (r2) {};
+\node [system, left = 50pt of r2] (m2) {\(\rbM\two\)};
+\coordinate [left = 50pt of m2] (start2);
+\coordinate [right = 50pt of r2] (end2);
+
+\draw [system connection] (start2) -- node [above] {\(\mu\two\)} (m2);
+\draw [system connection] (m2) -- node [above] {\(\sigma\two\)} (r2);
+\draw [system connection] (r2) -- node [above] {\(\mu\two\)} (end2);
+
+\node [fit=(r1.west) (r1.south east) (r1.center) (r2.center), inner sep=-0.5\pgflinewidth, fill=cC, text=fF] {\(\rbR\)};

@@ -1,0 +1,30 @@
+\node [nature] (nature) {Nature};
+\coordinate [above = of nature] (p);
+\draw [->] (nature) -- node [right] {\(p\)} (p);
+
+\node [dynamic, below = 5pt of nature, invisible] (phantom) {phantom};
+
+
+\node [dynamic, left = 0pt of phantom] (f1) {\(f\one\)};
+\node [markov strategy, left = of f1] (sigma1) {\(\sigma\one\)};
+
+\node [dynamic, right = 0pt of phantom] (f2) {\(f\two\)};
+\node [markov strategy, right = of f2] (sigma2) {\(\sigma\two\)};
+
+\coordinate (s_to_f1) at (f1.160);
+\draw [->] (sigma1.east|-s_to_f1) -- node [connection] (a1) {} (s_to_f1);
+\draw [->] (a1) |- node [left, pos=.25] {\(a\one\)} (nature);
+
+\coordinate (f_to_s1) at (f1.200);
+\draw [->] (f_to_s1) -- node [below] {\(x\one\)} (sigma1.east|-f_to_s1);
+
+\coordinate (s_to_f2) at (f2.20);
+\draw [->] (sigma2.west|-s_to_f2) -- node [connection] (a2) {} (s_to_f2);
+\draw [->] (a2) |- node [right, pos=.25] {\(a\two\)} (nature);
+
+\coordinate (f_to_s2) at (f2.340);
+\draw [->] (f_to_s2) -- node [below] {\(x\two\)} (sigma2.west|-f_to_s2);
+
+\node [above = 50pt of sigma1.north west, inner sep = 0, anchor = south west] {\(u\one \of{a\one, p}\)};
+
+\node [above = 50pt of sigma2.north east, inner sep = 0, anchor = south east] {\(u\two \of{a\two, p}\)};

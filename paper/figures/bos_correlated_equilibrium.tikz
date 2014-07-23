@@ -1,0 +1,10 @@
+\tikzset{node distance = 0.4cm and 0.4cm} % the first value is unused
+
+\matrix [matrix of math nodes, name = joint, below = of alpha] {
+\dfrac{1}{2} \tuple{\rF, \rF}      & |[translucent]| 0 \tuple{\rF, \rO} \\
+|[translucent]| 0 \tuple{\rO, \rF} & \dfrac{1}{2} \tuple{\rO, \rO}      \\
+};
+
+\node [right = of joint, name = implies] {\(\implies\)};
+
+\node [right = of implies, name = utilities] {\(u\ag{\male} = \frac{3}{2}, u\ag{\female} = \frac{5}{2}\)};

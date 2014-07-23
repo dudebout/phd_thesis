@@ -1,0 +1,11 @@
+\matrix (m) [information flow, column sep = 30pt, odd rows readability guides]
+{
+                     & |[alias=a]| a\one\Tt \drawn \sigma\one \of{z\one\Tt} &                                                            \\
+                     & |[alias=s]| s\one\Tp \drawn \mu\one \of{z\one\Tt}                                                                 \\
+|[alias=z]| z\one\Tt &                                                      & |[alias=zP]| z\one\Tp \drawn m\one \of{z\one\Tt, s\one\Tp} \\
+};
+
+\draw [dependency]            (z.30)   -- (a.west);
+\draw [dependency]            (z)      -- (zP);
+\draw [dependency]            (z.15)   -- (s.west);
+\draw [dependency, emphasize] (s.east) -- (zP.175) node [midway, sloped, above] {\scriptsize{signal}};

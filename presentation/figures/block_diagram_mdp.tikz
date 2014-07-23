@@ -1,0 +1,10 @@
+\node [dynamic]               (f) {\(f\)};
+\node [strategy, left = of f]     {\(\sigma\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = of x1] (x2);
+
+\draw [->] (a1) -- node [above] {\(a\)} (a2);
+\draw [->] (x1) -- node [below] {\(x\)} (x2);

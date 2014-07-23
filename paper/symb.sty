@@ -1,0 +1,58 @@
+\ProvidesPackage{symb}
+
+\RequirePackage{ddbsymb}
+\RequirePackage{wasysym} % \male and \female symbols
+
+\newcommand{\K}{^k}
+
+\newcommand{\params}{_}
+\newcommand{\strat}{_}
+
+\newcommand{\gbr}[1][\tau]{\mathrm{GBR}^{#1}}
+\newcommand{\sbr}[1][\epsilon]{\mathrm{BR}^{#1}}
+
+\newcommand{\eQ}[2][]{\ensuremath{\ex^{\frac{1}{\tau#1} Q#1\of{x#1, z#1, #2#1}}}}
+\newcommand{\gibbsQ}[1][]{\ensuremath{\frac {\eQ[#1]{a}} {\sum\idxin{{a#1}'}{\cA#1} \eQ[#1]{a'}}}}
+
+\newcommand{\Btheta}{\sB\params{\theta}}
+\newcommand{\Bthetap}{\sB\params{\theta'}}
+\newcommand{\Uopt}[1][]{U\opt\params{#1}}
+\newcommand{\Utheta}{\Uopt[\theta]}
+\newcommand{\Uthetap}{\Uopt[\theta']}
+
+\newcommand{\subfunc}[1]{\mathrm{(#1)}}
+
+\newcommand{\pref}{\succeq}
+
+\newcommand{\muhat}{\hat{\mu}}
+\newcommand{\shat}{\hat{s}}
+\newcommand{\Shat}{\hat{S}}
+
+\newcommand{\F}{F^}
+\newcommand{\G}{G^}
+\newcommand{\FO}{\F{\rO, m}}
+\newcommand{\FM}{\F{\rM, m}}
+\newcommand{\FF}{\F{m}}
+\newcommand{\FOe}{\F{\rO, m, \epsilon}}
+\newcommand{\FFe}{\F{m, \epsilon}}
+\newcommand{\GGe}{\G{m, \epsilon}}
+
+\newcommand{\param}{_}
+
+\newcommand{\sig}{\param{\sigma}}
+\newcommand{\muI}{\param{\sigma}}
+
+\newcommand{\Ll}{_{l}}
+\newcommand{\Lw}{_{l, W\Tz}}
+
+\newcommand{\citethm}[1]{Th.~{#1}}
+\newcommand{\citelemma}[1]{Lemma~{#1}}
+\newcommand{\citepage}[1]{p.~{#1}}
+\newcommand{\citepages}[1]{pp.~{#1}}
+\newcommand{\citeeq}[1]{eq.~{(#1)}}
+\newcommand{\citefig}[1]{Fig.~{#1}}
+\newcommand{\citeapp}[1]{Appendix~{#1}}
+\newcommand{\citesec}[1]{Sec.~{#1}}
+\newcommand{\citechap}[1]{Ch.~{#1}}
+\newcommand{\citealgo}[1]{Algorithm~{#1}}
+\newcommand{\citeprop}[1]{Prop.~{#1}}

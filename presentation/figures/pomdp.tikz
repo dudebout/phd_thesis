@@ -1,0 +1,11 @@
+\node [dynamic, alert on =<3>]                                                 (f)     {\(f\)};
+\node [observation, alert on=<2-3>, left = of f.south west, anchor = south east] (nu)    {\(\nu\)};
+\node [strategy, left = of nu.south west, anchor = south east]                 (sigma) {\(\sigma\)};
+
+\coordinate (a) at (f.160);
+
+\draw [->] (a-|sigma.east) -- node [above] {\(a\)} (a);
+\draw [->, alert on=<2->] (nu-|f.west) -- node [below] {\(x\)} (nu);
+\draw [->] (nu) -- node [below] {\(y\)} (nu-|sigma.east);
+
+\node [above = of sigma.north west, anchor = west, inner sep=0pt] {\(u \of{x, a}, \delta\)};

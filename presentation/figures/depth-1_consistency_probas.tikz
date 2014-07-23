@@ -1,0 +1,33 @@
+\pgfmathsetseed{1234}
+
+\node [dynamic] (f) {\(f\)};
+\node [markov strategy, left = 50pt of f] (sigma) {\(\sigma\)};
+
+\coordinate (a) at (f.160);
+\coordinate (x) at (f.200);
+
+\node [nature, above = 40pt of f] (nature) {Nature};
+
+\draw [->] (sigma.east|-a) -- node [above] {\(a\)} (a);
+\draw [->] (x) -- node [below] {\(x\)} (sigma.east|-x);
+\draw [->] (nature) -- node [connection] (s) {} node [right] {\(s\)} (f);
+
+\draw [->] (s) -| node [pos=.25, model] {\(m^{k}\)} node [above] {\(z\)} (sigma);
+
+\node [right = 10pt of nature] {\(
+\left\{
+\begin{aligned}
+w\nxt &\drawn n \of{w, x, a} \\
+s\nxt &\drawn \nu \of {w\nxt}
+\end{aligned}
+\right.
+\)
+};
+
+\node [below = of sigma.south west, anchor = north west, inner sep=0] {\(
+\displaystyle
+\begin{aligned}
+\mu \of {z}\elmt{s\nxt} &= \probacond{s\nxt}{z} \\
+&= \limfty{t} \probacond{S\Tp = s\nxt}{Z\Tt=z}
+\end{aligned}
+\)};

@@ -1,0 +1,31 @@
+\pgfplotsset{bestresponse/.style={mark=none}}
+\pgfplotsset{nashequilibrium/.style={only marks}}
+
+\begin{axis}[
+axis lines=middle,
+axis line style=dimmer,
+axis equal image,
+clip=false,
+xmax=1.1,
+ymax=1.1,
+tick style=dimmer,
+ticklabel style={dimmer, /pgf/number format/.cd,frac},
+xtick={0.75, 1},
+ytick={0.3333333, 1},
+label style=dimmer,
+xlabel=\(p\ag{\male}\),
+xlabel style={anchor=north, yshift=-0.15cm}, % 0.15cm is the default /pgfplots/tickwidth
+ylabel=\(p\ag{\female}\),
+ylabel style={anchor=east, xshift=-0.15cm},
+],
+\addplot[name path=brm, bestresponse] coordinates {(0,0) (0,1/3) (1,1/3) (1,1)};
+\node[anchor=west] at (axis cs:1,0.666666) {\(\br\ag{\male} \of{p\ag{\female}}\)};
+
+\addplot[name path=brw, bestresponse, dashed] coordinates {(0,0) (3/4,0) (3/4,1) (1,1)};
+\node[anchor=east] at (axis cs:0.75,0.666666) {\(\br\ag{\female} \of{p\ag{\male}}\)};
+
+\circleintersections{brm}{brw}
+
+% Shift of a half tick width
+\node[anchor=north east, xshift=-0.075cm, yshift=-0.075cm, dimmer] at (axis cs:0,0) {\(0\)};
+\end{axis}

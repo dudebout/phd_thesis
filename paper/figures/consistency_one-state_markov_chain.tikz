@@ -1,0 +1,15 @@
+\tikzset{state/.style={draw, circle, minimum width = 25pt}}
+
+\node [state] (z) {\(z\param{\emptyset}\)};
+
+\node [above = 50pt of z] (s) {\(\mu\of{z\param{\emptyset}} = \; ?\)};
+
+\path (z) edge[loop left]  node [left]  (z0) {\(s = 0\)} (z);
+\path (z) edge[loop right] node [right] (z1) {\(s = 1\)} (z);
+
+\draw [->, double] (z) -- (s);
+
+\begin{pgfonlayer}{background}
+  \node [translucent, draw, shaded, rectangle, fit= (z) (z0) (z1), inner sep=5pt] (m) {};
+  \node [dimmer, anchor = south east] at (m.north east) {\(m^{0}\)};
+\end{pgfonlayer}

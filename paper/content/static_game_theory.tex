@@ -1,0 +1,1320 @@
+\section{Decision Making}
+\label{sec:static_decision_making}
+
+Decision making is the rational process of finding the best action given the information available.
+An agent is given a set of actions~\(\cA\) and preferences over these actions.
+Preferences are expressed by a utility function~\(u \from \cA \to \bR\), such that for two actions~\(a\) and~\(a'\) in~\(\cA\), the following two properties hold:
+\begin{itemize}
+\item The agent prefers~\(a\) over~\(a'\) if and only if \(u \of {a} > u \of {a'}\).
+\item The agent is indifferent between~\(a\) and~\(a'\) if and only if \(u \of {a} = u \of {a'}\).
+\end{itemize}
+The utility of an action can be interpreted as a payoff that the agent wants to maximize.
+
+The agent can also make nondeterministic decisions.
+Instead of committing to a specific action, it can choose a mixed action.
+In game-theoretic terms, a mixed action~\(\alpha\) is a distribution over the action set, \ie an element of~\(\distribover{\cA}\).
+Similarly, the actions in the original action set are often called pure actions.
+A mixed action's payoff is the expected value of the payoffs of the pure actions in its support.
+For example, choosing~\(a\) with probability~\(\frac{1}{3}\) and~\(a'\) with probability~\(\frac{2}{3}\) yields a payoff~\(\frac{1}{3} u \of {a} + \frac{2}{3} u \of {a'}\).
+As a result, the domain of the utility function can be unambiguously extended from the action set~\(\cA\) to distributions over the action set~\(\distribover {\cA}\), \ie \(u \from \distribover{\cA} \to \bR\).
+For an element~\(\alpha \) in~\( \distribover {\cA}\), \(u \of {\alpha} = \expectof[A \drawn \alpha]{u \of {A}}\).
+Therefore, given a utility function, solving a decision-making problem is equivalent to solving a stochastic optimization problem
+\[
+\argmax\idxin{\alpha}{\distribover{\cA}} u \of {a}.
+\]
+
+\begin{note}[Von Neumann--Morgenstern Utility Theorem]
+The representation of preferences by utility functions was characterized by von Neumann and Morgenstern~\cite{von-neumann_morgenstern:1947}.
+They proved that rational preferences can always be represented by a utility function to be maximized in expectation and that the utility function is unique up to a positive affine transformation.
+Preferences are rational if they satisfy four axioms: completeness, transitivity, continuity, and independence of irrelevant alternatives.
+Human decision makers might not verify these axioms, but engineered agents can always be designed to verify them.
+Insuring the validity of these axioms is therefore not a concern for this research.
+
+Formally, a preference is a total order on distributions over actions.
+Such a binary relation is classically represented by the infix operator~\(\pref\).
+Given two distributions~\(\alpha\) and~\(\beta\), the fact that the agent prefers~\(\alpha\) to~\(\beta\) is denoted by~\(\alpha \pref \beta\).
+This preference is not strict and the agent could in fact be indifferent between~\(\alpha\) and~\(\beta\) if \(\beta \pref \alpha\) is also true.
+The four axioms of rational preferences are defined as follows:
+\begin{description}
+  \item[Completeness]
+    Given two distributions~\(\alpha\) and~\(\beta\), then~\(\alpha \pref \beta\) or~\(\beta \pref \alpha\).
+  \item[Transitivity]
+    Given three distributions~\(\alpha\), \(\beta\), and~\(\gamma\) such that~\(\alpha \pref \beta\) and~\(\beta \pref \gamma\), then~\(\alpha \pref \gamma\).
+  \item[Continuity]
+    Given three distributions~\(\alpha\), \(\beta\), and~\(\gamma\) such that~\(\alpha \pref \beta \pref \gamma\), there exists~\(p \in \interval{0}{1}\) such that~\(\beta = p \alpha + \onem{p} \gamma\).
+  \item[Independence of irrelevant alternatives]
+    Given two distributions~\(\alpha\) and \(\beta\) such that~\(\alpha \pref \beta\), a third distribution \(\gamma\), and~\(p \in \interval{0}{1}\), then~\(p \alpha + \onem{p} \gamma \pref p \beta + \onem{p} \gamma\).
+\end{description}
+\end{note}
+
+
+\section{Games and Nash Equilibria}
+
+In a game setting, a set of agents~\(\cI\) faces decision-making problems.
+Each agent~\(i\) in~\(\cI\) has an action set~\(\cA\Ii\) and a utility function~\(u\Ii \from \cA \to \bR\), where \(\cA = \prod \idxin{i}{\cI} \cA\Ii\) is called the joint action set.
+Note that this utility function for agent~\(i\) depends on the actions of all the agents and not only its own.
+The tuple composed of all these utility functions~\(u = \agstuple{u}\) defines a game.
+As mentioned earlier, decision making is the rational process of finding an optimal action given the information available.
+There is no obvious way to extend that definition to the multiagent setting.
+Preferences of different agents cannot be aggregated; therefore, the notion of optimality for the set of agents is ill defined.
+
+Optimality for an individual agent is still well defined.
+Denote the opponents of agent~\(i\) by~\(-i = \cI \setminus \set{i}\).
+For fixed actions of its opponents, agent~\(i\) faces a decision-making problem.
+The actions in~\(\cA\Ii\) optimal for the fixed actions of~\(-i\) are called best responses of agent~\(i\).
+Let~\(a\mI = \opstuplecom{a}\) denote a tuple of~\(\card{\cI} - 1\) actions corresponding to one action for each opponent of agent~\(i\).
+The set of all such actions~\(\opssettim{\cA}\) is called the joint action set of the opponents of agent~\(i\) and is denoted by~\(\cA\mI\).
+For a fixed~\(a\mI\), the best-response set of agent~\(i\) is~\(\br\Ii \of {a\mI} = \argmax\idxin{a\Ii}{\cA\Ii} u\Ii \of {a\Ii, a\mI}\), a subset of~\(\cA\Ii\).
+
+\begin{note}[Set-valued Functions]
+The mapping~\(\br\Ii \from \cA\mI \to \powset{\cA\Ii}\) is a set-valued function.
+It takes an element in~\(\cA\mI\) and returns a subset of~\(\cA\Ii\).
+The set of subsets of~\(\cA\Ii\) is called the power set of~\(\cA\Ii\).
+This power set is commonly denoted by~\(\powset{\cA\Ii}\).
+For each joint actions of agent~\(i\)'s opponents~\(a\mI \in \cA\mI\), \(\br\Ii \of {a\mI}\) contains one or more actions of agent~\(i\) that are optimal against~\(a\mI\).
+In particular, it never returns an empty set.
+Set-valued functions with this property are called correspondences.
+
+Correspondences~\(f \from \cA \to \powset{\cB}\) from~\(\cA\) to subsets of~\(\cB\) have similarities with functions from~\(\cA\) to~\(\cB\).
+The classical notation for correspondences \(f \from \cA \tto \cB\) emphasizes these similarities.
+With this notation, the best-response correspondence is such that~\(\br\Ii \from \cA\mI \tto \cA\Ii\).
+
+Theorems about functions often have correspondence counterparts.
+For example, Kakutani's fixed-point theorem is an extension of Brouwer's fixed-point theorem.
+Brouwer's theorem proves the existence of fixed points for continuous functions on convex compact sets.
+Kakutani's theorem replaces continuity by a set of conditions on the graph of a correspondence to reach a similar conclusion.
+These theorems will be used to prove the existence of equilibria in \cref{sec:nash_existence_theorem}
+\end{note}
+
+\subsection{Pure Nash Equilibrium}
+
+A joint action that is simultaneously a best response for all the agents is a reasonable candidate to replace optimality in the multiagent setting.
+This concept, at the core of game theory, is called a Nash equilibrium.
+A joint action~\(a \in \cA\) is a pure Nash equilibrium if and only if for all~\(i \in \cI\), \(a\Ii \in \br\Ii \of {a\mI}\).
+
+Defining an optimal action in a single-agent decision-making problem is straightforward and unambiguous.
+Given a utility function, an action is optimal if and only if it maximizes this utility function.
+There are many ways to illustrate what optimality means, and the following story is one of them.
+Consider a rational agent facing a decision-making problem.
+Suppose the agent knows the utility function associated with its rational preferences.
+The agent is asked to submit an action.
+Then, the agent is asked if, given the circumstances, it is satisfied with its choice.
+Obviously, the answer is yes if and only if the action is a utility maximizer, \ie an optimal action.
+This story seems silly and does not add anything to the definition of optimality.
+In particular, it is unclear why the notion of circumstances is introduced.
+However, this kind of stories is key in defining game-theoretic solution concepts.
+In the present context, the story is redundant because the notion of optimal action is intrinsic to the decision-making problem.
+
+Let's now look at the story corresponding to the Nash equilibrium.
+It will help shed some light on the so-called circumstances mentioned previously.
+Consider a group of rational agents facing a game.
+Suppose each agent knows the utility function associated with its rational preferences.
+Each agent is asked to submit a pure action without discussing with the other agents.
+Then, each agent is asked, if given the circumstances, it is satisfied with its action.
+In this context, the circumstances are the actions of all the other agents.
+Agent~\(i \in \cI\) is satisfied if and only if \(a\Ii \in \br\Ii \of {a\mI}\).
+Therefore, all the agents are simultaneously satisfied if and only if the joint action is a joint utility maximizer, \ie a pure Nash equilibrium.
+
+
+This story emphasizes that a pure Nash equilibrium is not an intrinsic solution concept.
+Modifying some elements of the story would yield a different solution concept.
+The three main characteristics leading to a Nash equilibrium are the following:
+\begin{description}
+  \item[Independent action selection]
+    Players communication is proscribed.
+    As a result, they choose their actions independently of each other.
+    Note that preventing communication is not intrinsic to the game.
+  \item[Unilateral deviation]
+    Each agent is asked if it is happy given the other~\(\card{\cI} - 1\) actions are fixed.
+    In other words, each agent is asked if it would prefer to unilaterally deviate.
+    Nothing in the formulation of the game emphasizes these unilateral changes.
+    The agents could, for example, deviate in pairs.
+  \item[Static concept]
+    The solution concept defined is static.
+    Each agent is asked if it is satisfied with its action and the story ends.
+    The agents do not choose a new action and the process does not repeat.
+    Using only a static solution concept is, once again, not intrinsic to the game formulation.
+    It is a common misconception to see some notion of time in the story.
+    This intuition to repeat the process actually prefaces learning in games which is covered later on.
+\end{description}
+
+To find a Nash equilibrium, you do not necessarily have to use this story.
+You can imagine receiving a joint action as the result of an optimization problem, that turns out to be a Nash equilibrium.
+However, a joint action is a pure Nash equilibrium if and only if it can be cast in this storyline.
+This last statement will be used shortly to introduce a new solution concept that is not a Nash equilibrium.
+
+\subsection{Mixed Nash Equilibrium}
+
+The definition of best response is readily extended to mixed actions.
+To do so, remember that the utility of a mixed action~\(\alpha \in \distribover{\cA}\) is defined as~\(u \of {\alpha} = \expectof[A \drawn \alpha]{u \of {A}}\).
+In the original definition of best response, there was nothing specific to pure actions.
+Let~\(i\) be an agent.
+For a distribution over the joint action set of its opponents~\(\alpha\mI \in \distribover{\prod\idxin{j}{-i} \cA\Ij}\), define \(\br\Ii \of {\alpha\mI} = \argmax\idxin{\alpha\Ii}{\distribover{\cA\Ii}} u\Ii \of {\alpha\Ii, \alpha\mI}\).
+This defines a correspondence~\(\br\Ii \from \distribover{\prod\idxin{j}{-i} \cA\Ij} \tto \distribover{\cA\Ii}\).
+Note that the best-response mapping for agent~\(i\) is defined for all distributions over the joint action set of the opponents~\(\distribover{\prod\idxin{j}{-i} \cA\Ij}\) and not only product of independent distributions~\(\prod\idxin{j}{-i} \distribover{\cA\Ij}\).
+
+\begin{note}[Distributions over Product Spaces]
+\label{sec:distribution_over_product_spaces}
+Let~\(\cB\one\) and~\(\cB\two\) be two finite sets associated with two agents~\(1\) and~\(2\).
+Let~\(\beta\one \in \distribover{\cB\one}\) and~\(\beta\two \in \distribover{\cB\two}\) be distributions over these sets.
+Agent~\(1\) draws a sample~\(b\one\) from~\(\beta\one\).
+Agent~\(2\) independently draws a sample~\(b\two\) from~\(\beta\two\).
+The resulting pair~\(b = \tuple{b\one, b\two}\) is drawn according to distribution~\(\beta\), such that~\(\beta \elmt {b\one, b\two} = \beta\one \elmt {b\one} \beta\two \elmt {b\two}\).
+This distribution~\(\beta\) is called the product distribution of~\(\beta\one\) and~\(\beta\two\), denoted by~\(\beta = \tuple{\beta\one, \beta\two}\).
+There are, however, more distributions over~\(\cB\one \times \cB\two\) than product distributions, \ie~\(\distribover{\cB\one} \times \distribover{\cB\two} \subsetneq \distribover{\cB\one \times \cB\two}\).
+A distribution that is not a product distribution cannot be written as a pair, nor as a tuple when working in more than two dimensions.
+
+Given a distribution~\(\beta \in \distribover{\cB\one \times \cB\two}\) the marginal distributions~\(\beta\one\) and~\(\beta\two\) over~\(\cB\one\) and~\(\cB\two\) are defined as follows:
+\[
+\begin{aligned}
+\forall b\one \in \cB\one\comma \beta\one \elmt{b\one} &= \sum\idxin{b\two}{\cB\two} \beta \elmt{b\one, b\two}, \\
+\forall b\two \in \cB\two\comma \beta\two \elmt{b\two} &= \sum\idxin{b\one}{\cB\one} \beta \elmt{b\one, b\two}.
+\end{aligned}
+\]
+In general, the marginal distributions alone are not enough to reconstruct the original distribution.
+Product of independent distribution~\(\beta = \tuple{\beta\one, \beta\two}\) are the exception since the marginals coincide with~\(\beta\one\) and~\(\beta\two\) and are sufficient to recover~\(\beta\).
+
+Since~\(\beta\Ii\) represents either an element in a product distribution or a marginal, care must be taken when this notation is encountered.
+The context will clarify which one is meant.
+
+Let's conclude this note by making the meaning of the four most encountered distribution sets in this research explicit:
+\begin{itemize}
+\item An element~\(\alpha\) in~\(\distribover{\agsset{\cA}} = \distribover{\cA}\) represents a distribution over the joint action set.
+In this setting, \(\alpha\Ii\) is the marginal for agent~\(i\).
+\item An element~\(\alpha = \agstuplecom{\alpha}\) in~\(\agsdistset{\cA}\) represents a product distributions over the action sets of the agents.
+It results from each agent independently choosing a distribution over its own action set.
+\item An element~\(\alpha\mI\) in~\(\distribover{\opsset{\cA}} = \distribover{\cA\mI}\) represents a distribution over the joint action set of the opponents of agent~\(i\).
+\item An element~\(\alpha\mI = \opstuplecom{\alpha}\) in~\(\opsdistset{\cA}\) represents a product distribution over the action sets of the opponents of agent~\(i\).
+It results from each opponent of agent~\(i\) independently choosing a distribution over its own action set.
+\end{itemize}
+\end{note}
+
+With this definition of the mixed best response correspondence, Nash equilibria can be extended to agents playing mixed actions.
+To do so, we are going to repeat the Nash equilibrium story making the required changes.
+Consider a group of rational agents facing a game.
+Suppose each agent knows the utility function associated with its rational preferences.
+Each agent is asked to submit a mixed action without discussing with the other agents.
+Then, each agent is asked, if given the circumstances, it is satisfied with its mixed action.
+In this context, the circumstances for agent~\(i\) is the product distributions created by the mixed actions of all the other agents~\(\alpha\mI = \opstuplecom{\alpha} \in \opsdistset{\cA}\).
+The answers are all yeses if and only if the joint mixed action is a joint utility maximizer, \ie a mixed Nash equilibrium.
+More succintly, a product of independent distributions~\(\alpha = \agstuplecom{\alpha} \in \agsdistset{\cA}\) is a mixed Nash equilibrium if and only if for all~\(i\) in~\(\cI\), \(\alpha\Ii \in \br\Ii \of {\alpha\mI}\).
+A mixed Nash equilibrium is often simply called a Nash equilibrium.
+Similarly, an either pure or mixed Nash equilibrium is called a potentially mixed Nash equilibrium.
+
+Nash proved the following fact which is a cornerstone of game theory.
+Any game with a finite number of players choosing from finite actions sets has at least one, potentially mixed, Nash equilibrium.
+
+\section{A Game Example}
+Let's illustrate the game-theoretic concepts exposed so far on the following game known as battle of the sexes.
+A couple, composed of a man~\(\male\) and a woman~\(\female\), is planning a date.
+Each one chooses between two actions: going to a football game~\(\rF\) or going to an opera performance~\(\rO\).
+The joint action of the couple is represented by an ordered pair~\(\tuple{a\ag{\male}, a\ag{\female}}\), where~\(a\ag{\male}\) is the action chosen by the man and~\(a\ag{\female}\) by the woman.
+For example, \(\tuple{\rF, \rO}\) denotes that he chooses football and she chooses opera.
+
+The man prefers to be with the woman rather than separated from her.
+If they are together, he prefers football~\(\tuple{\rbF, \rF}\) to opera~\(\tuple{\rbO, \rO}\).
+If they are not together, he is indifferent between football~\(\tuple{\rbF, \rO}\) and opera~\(\tuple{\rbO, \rF}\).
+The woman prefers to be with the man rather than separated from him.
+If they are together, she prefers opera~\(\tuple{\rO, \rbO}\) to football~\(\tuple{\rF, \rbF}\).
+If they are not together, she still prefers opera~\(\tuple{\rF, \rbO}\) to football~\(\tuple{\rO, \rbF}\).
+Their preferences can be implemented by utility functions~\(u\ag{\male}\) for the man and~\(u\ag{\female}\) for the woman with the following values:
+\begin{equation*}
+\begin{aligned}
+u\ag{\male} \of {\rF, \rF}  &= 2, & u\ag{\male} \of {\rO, \rO}  &= 1, & u\ag{\male} \of {\rF, \rO}  &= 0, & u\ag{\male} \of {\rO, \rF}  &= 0, \\
+u\ag{\female} \of {\rO, \rO}  &= 3, & u\ag{\female} \of {\rF, \rF}  &= 2, & u\ag{\female} \of {\rF, \rO}  &= 1, & u\ag{\female} \of {\rO, \rF}  &= 0.
+\end{aligned}
+\end{equation*}
+
+The action sets and the utility functions of battle of the sexes are represented in a compact form as follows:
+\begin{equation*}
+\punctuategame{
+\begin{game}{2}{2}[\male][\female]
+        \> \(\rF\)  \> \(\rO\)  \\
+\(\rF\) \> \(2, 2\) \> \(0, 1\) \\
+\(\rO\) \> \(0, 0\) \> \(1, 3\)
+\end{game}}
+{.}\bigskip
+\end{equation*}
+The man's action determines the row and the woman's determines the column.
+Numbers in the cell are the utilities received: the first by the man and the second by the woman.
+This is called the normal-form representation of the game.
+
+To compute the best response of the man, fix the mixed action of the woman.
+A mixed action of the woman randomizes between~\(\rF\) and~\(\rO\).
+Since there are only two actions, a single number~\(p\ag{\female} \in \interval{0}{1}\) is enough to describe the mixed action where she chooses~\(\rF\) with probability~\(p\ag{\female}\) and~\(\rO\) with probability~\(\onem{p\ag{\female}}\).
+When the context makes the distinction clear, \(p\ag{\female}\) denotes either this probability or the mixed action.
+Note that she chooses a pure action for~\(p\ag{\female}=0\) or~\(p\ag{\female}=1\).
+When the woman plays~\(p\ag{\female}\), the utility received by the man is
+\begin{equation*}
+u\ag{\male} \of {\rF, p\ag{\female}}
+=
+p\ag{\female} u\ag{\male} \of {\rF, \rF} + \onem{p\ag{\female}} u\ag{\male} \of {\rF, \rO}
+=
+2p\ag{\female}
+,
+\end{equation*}
+if he plays~\(\rF\), and
+\begin{equation*}
+u\ag{\male} \of {\rO, p\ag{\female}}
+=
+p\ag{\female} u\ag{\male} \of {\rO, \rF} + \onem{p\ag{\female}} u\ag{\male} \of {\rO, \rO}
+=
+1 - p\ag{\female}
+,
+\end{equation*}
+if he plays~\(\rO\).
+His optimal action depends on~\(p\ag{\female}\) with a critical value of~\(\frac{1}{3}\).
+If~\(p\ag{\female} > \frac{1}{3}\), he strictly prefers~\(\rF\) to~\(\rO\).
+If~\(p\ag{\female} < \frac{1}{3}\), he strictly prefers~\(\rO\) to~\(\rF\).
+If~\(p\ag{\female} = \frac{1}{3}\), he is indifferent between~\(\rF\) and~\(\rO\); any combination of~\(\rF\) and~\(\rO\) is a best response to~\(p\ag{\female} = \frac{1}{3}\).
+Grouping all of these preferences yields the following best-response correspondence for the man:
+\begin{equation*}
+\br\ag{\male} \of{p\ag{\female}} =
+\begin{cases}
+\set{\rF} & \text{if } p\ag{\female} > \frac{1}{3}, \\
+\set{\rO} & \text{if } p\ag{\female} < \frac{1}{3}, \\
+\setsuchthat{p\ag{\male} \rF + \onem{p\ag{\male}} \rO}{p\ag{\male} \in \interval{0}{1}} & \text{if } p\ag{\female} = \frac{1}{3}.
+\end{cases}
+\end{equation*}
+
+The best response of the woman to the man's action~\(p\ag{\male}\) is computed in a similar fashion.
+The critical value of~\(p\ag{\male}\) making her indifferent is~\(\frac{3}{4}\) and the best-response correspondence is the following:
+\begin{equation*}
+\br\ag{\female} \of{p\ag{\male}} =
+\begin{cases}
+\set{\rF} & \text{if } p\ag{\male} > \frac{3}{4}, \\
+\set{\rO} & \text{if } p\ag{\male} < \frac{3}{4}, \\
+\setsuchthat{p\ag{\female} \rF + \onem{p\ag{\female}} \rO}{p\ag{\female} \in \interval{0}{1}} & \text{if } p\ag{\male} = \frac{3}{4}.
+\end{cases}
+\end{equation*}
+
+The best responses are plotted in \cref{fig:bos_best_response}.
+The intersections of the graphs correspond to the Nash equilibria of the game.
+Battle of the sexes has three Nash equilibria: two pure ones and one mixed.
+The pure Nash equilibria arise from the man and the woman choosing the same event.
+The mixed one corresponds to the man and the woman independently randomizing their choices with probabilities~\(p\ag{\male} = \frac{3}{4}\) and~\(p\ag{\female} = \frac{1}{3}\).
+
+\begin{figure}[ht]
+\centering
+\inputtikz{game_theory_best_response}
+\ccaption[Best responses and Nash equilibria for battle of the sexes.]{
+The man plays~\(\rF\) with probability~\(p\ag{\male}\).
+The woman plays~\(\rF\) with probability~\(p\ag{\female}\).
+The solid line is the man's best response.
+The dashed line is the woman's best response.
+The filled circles indicate the Nash equilibria.
+}
+\label{fig:bos_best_response}
+\end{figure}
+
+\subsection{A Different Story}
+\label{sec:different_story}
+
+In battle of the sexes, only one person is truly happy in each pure Nash equilibrium.
+The man is not thrilled to be at an opera performance, neither is the woman at the football game.
+The mixed Nash equilibrium seems more fair than the two pure ones.
+Each person has a chance to go on his or her preferred date.
+However, they end up in different locations most of the time.
+\Cref{fig:bos_mixed_nash} illustrates that more than half of the mixed Nash equilibrium distribution is focused on joint actions yielding low utility to both players.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{bos_mixed_nash_equilibrium}
+\ccaption[Distribution of the mixed Nash equilibrium for the battle of the sexes.]{
+The mixed Nash equilibrium~\(\alpha\) is the product of two independent distributions~\(\alpha\ag{\male}\) and~\(\alpha\ag{\female}\).
+More than half of the weight of distribution~\(\alpha\) is on~\(\tuple{\rF, \rO}\) and~\(\tuple{\rO, \rF}\) which are low-utility joint actions for both players.
+}
+\label{fig:bos_mixed_nash}
+\end{figure}
+
+When facing the kind of incompatible decisions modeled by battle of the sexes, humans sometimes have recourse to a coin toss.
+The man and the woman agree that on heads they go to the football game and on tails they go to the opera performance.
+Doing this induces a probability distribution focused on the high-utility joint actions, as illustrated in \cref{fig:bos_correlated}.
+
+\begin{figure}[htp]
+\ccaption[Distribution for the battle of the sexes using a coin toss.]{
+This distribution puts all its weight on high-utility joint actions.
+The utility for both agents is higher than in the mixed Nash equilibrium.
+}
+\label{fig:bos_correlated}
+\centering
+\inputtikz{bos_correlated_equilibrium}
+\end{figure}
+
+Introducing this coin toss in our equilibrium stories goes as follows.
+Consider two rational agents facing a battle of the sexes.
+Suppose each agent knows the utility function associated with its rational preferences.
+The agents agree to flip a coin to decide of their action.
+They both know that the coin is unbiased and produces heads and tails with probability one half.
+They both agree to play~\(\rF\) if the coin comes out as heads.
+They both agree to play~\(\rO\) if the coin comes out as tails.
+Each agent is asked two questions.
+First, given the circumstances, if the coin toss yields heads, are you satisfied with your agreed action~\(\rF\).
+Second, given the circumstances, if the coin toss yields tails, are you satisfied with your agreed action~\(\rO\).
+In this context, the circumstances are the distribution over heads and tails induced by the coin and the actions agreed upon by the opponent in case of heads and tails.
+The answers are all yeses, which is the characteristic of another form of equilibrium introduced by Aumann under the name correlated equilibrium~\cite{aumann:1974,aumann:1987}.
+Correlated equilibria will be described formally in the next section.
+Observe that, in this example, the correlated equilibrium maintains the fairness of the mixed Nash equilibrium and yields a higher utility for both agents.
+
+However, this course of actions does not induce a Nash equilibrium.
+Recall that the Nash equilibrium story requires independence in the choice of actions.
+This distribution over actions cannot be obtained as the product of two independent distributions.
+Therefore, this is not a Nash equilibrium.
+
+\section{Equilibria}
+
+In the previous sections, Nash and correlated equilibria have been introduced and illustrated.
+In the present section, these concepts are being more formally defined and some of their properties proven.
+
+A game is described by a set of agents, the action set of each agent, and a utility function for each agent.
+All this information is encoded in the function~\(u = \agstuple{u}\) defined as follows:
+\[
+\begin{aligned}
+u \from \cA &\to \bR\pow{\CI} \\
+a &\mapsto
+\begin{pmatrix}
+u\one \of{a} \\
+u\two \of{a} \\
+\vdots \\
+u\ag{\card{\cI}} \of {a}
+\end{pmatrix}\!\!.
+\end{aligned}
+\]
+Since each agent is trying to maximize its one-time payoff, this type of games is called one-shot games.
+As mentioned previously, one-shot games allow for mixed actions.
+In this case, the utility function of each agent is canonically extended through the use of expectation.
+The following note exposes a few canonical extensions allowing the application of functions to distributions.
+From now on, these canonical extensions are used implicitly when needed.
+For example, we will say that~\(u \from \cA \to \bR\pow{\CI}\) describes a one-shot game.
+We will not mention explicitly mixed actions even though they are allowed and their utility unambiguously defined through the canonical extension.
+
+\begin{note}[Canonical Extensions and Category Theory]
+\label{note:canonical_extensions}
+We defined the utility function for pure actions and later extended it to handle mixed actions through the use of expectation.
+This extension is not restricted to utility functions.
+Let~\(u \from \cA \to \cK\), where \(\cK\) is an \(\bR\) vector space.
+The domain of~\(u\) can be extended to accommodate distributions over~\(\cA\) and yield~\(\tilde{u} \from \distribover{\cA} \to \cK\).
+For~\(\alpha \in \distribover{\cA}\), define~\(\tilde{u} \of{\alpha} = \sum\idxin{a}{\cA} \alpha \elmt{a} u \of{a}\).
+This extension only relies on the fact that~\(\cK\) is a vector space on~\(\bR\) and that probabilities are real numbers.
+In particular, when~\(u\) represents a utility, the vector space~\(\cK\) is~\(\bR\) itself.
+Previously, we used the symbol~\(u\) to represent both the original function and the extension.
+This abuse of notation is common since this is the canonical extension.
+
+We now explicit two other commonly used canonical extensions.
+
+Let~\(f\) be a function from~\(\cA\) to~\(\cB\).
+The function~\(f\) cannot readily be applied to distributions over~\(\cA\).
+However, it can be extended to a function~\(\tilde{f}\) on distributions.
+Function~\(f \from \cA \to \cB\) is extended to function~\(\tilde{f} \from \distribover{\cA} \to \distribover{\cB}\).
+Let~\(\alpha\) be a distribution over~\(\cA\).
+The extension works by associating to each element~\(b \in \cB\) a probability equal to the sum of probabilities of its preimages in~\(\alpha\), \ie
+\[
+\forall b \in \cB \comma \tilde{f} \of{\alpha} \elmt{b}
+=
+\sum\idx{\substack{a \in \cA \comma \\ f \of{a} = b}} \alpha \elmt{a}.
+\]
+By abuse of notation, the symbol~\(f\) represents the function from~\(\cA\) to~\(\cB\), as well as the extension to~\(\distribover{\cA}\).
+
+Let~\(g\) be a function from~\(\cA\) to~\(\distribover{\cB}\), and~\(\alpha\) be a distribution over~\(\cA\).
+Define \(\tilde{g} \from \distribover{\cA} \to \distribover{\cB}\) such that
+\[
+\forall b \in \cB \comma \tilde{g} \of{\alpha} \elmt{b} = \sum\idx{a \in \cA\comma} \alpha \elmt{a} g \of{a} \elmt{b}.
+\]
+as the extension to~\(g\).
+By abuse of notation, the symbol~\(g\) represents the function from~\(\cA\) to~\(\distribover{\cB}\), as well as the extension to~\(\distribover{\cA}\).
+In fact, this derivation can be seen as an application of the extension through expectation, since~\(\distribover{\cB}\) is an~\(\bR\) vector space.
+
+The extensions of~\(f\) and~\(g\) have been called canonical.
+Looking at probability distributions through the eye of category theory backs this claim.
+In a nutshell, category theory is an extension of set theory.
+Set-theoretical algebraic structures, such as monoids, have category-theoretical counterparts.
+In particular, two structures shed light on the extensions.
+The extension of~\(f\) is explained by the fact that probability distributions form a functor.
+The extension of~\(g\) by the fact that they form a monad.
+The details about functors and monads are beyond the scope of this research, but the interested reader is referred to~\cite{mac-lane:1998,spivak:2014} for more information.
+
+Category theory is mentioned here for two reasons.
+First, it is a tool making reasoning about probabilities easier.
+Second, this theoretical tool has practical implications for programming with probability distributions.
+The programming implications are explored in the following example.
+\end{note}
+
+\begin{example}[Category Theory in Haskell]
+Haskell~\cite{www.haskell.org} is a programming language with strong mathematical roots.
+As such, it is a very good tool for applied mathematics.
+In particular, category theory is baked at the heart of Haskell; functors and monads are handled natively.
+Below is a toy example demonstrating this fact.
+
+Let~\(\cA = \set{a\one, a\two}\) and~\(\cB = \set{b\one, b\two, b\three}\) be two finite sets. Let
+\[
+\begin{split}
+\begin{aligned}
+f \from \cA &\to \cB \\
+a\one &\mapsto b\three \\
+a\two &\mapsto b\one,
+\end{aligned}
+\end{split}
+\qquad\text{and}\qquad
+\begin{split}
+\begin{aligned}
+g \from \cA &\to \distribover{\cB} \\
+a\one &\mapsto b\one \\
+a\two &\mapsto 0.15 \, b\one + 0.6 \, b\two + 0.25 \, b\three
+\end{aligned}
+\end{split}
+\]
+be two functions with domain~\(\cA\), and~\(\alpha = \frac{1}{5} a\one + \frac{4}{5} a\two\) a distribution over~\(\cA\).
+
+This setup is translated in Haskell as follows:
+\begin{alltt}
+data A = A1 | A2
+data B = B1 | B2 | B3
+
+f :: A  -> B
+f    A1 =  B3
+f    A2 =  B1
+
+g :: A  -> \(\Delta\)(B)
+g    A1 =  [(B1, 1)]
+g    A2 =  [(B1, 0.15), (B2, 0.6), (B3, 0.25)]
+
+\(\alpha\) :: \(\Delta\)(A)
+\(\alpha\) =  [(A1, 0.2), (A2, 0.8)]
+\end{alltt}
+
+Function application in Haskell is denoted by~\texttt{\$}.
+The following shows the result of applying~\(f\) to~\(a\one\) and~\(g\) to~\(a\two\):
+\begin{alltt}
+> f \$ A1
+B3
+
+> g \$ A2
+[(B1, 0.15), (B2, 0.6), (B3, 0.25)]
+\end{alltt}
+
+Applying a function in a functor context is represented by \texttt{<\$>}.
+Applying it in a monad context is represented by \texttt{=<<}.
+With these two notations, the functions~\(f\) and~\(g\) can be applied to the distribution~\(\alpha\) as follows:
+\begin{alltt}
+> f <\$> \(\alpha\)
+[(B1, 0.8), (B3, 0.2)]
+
+> g =<< \(\alpha\)
+[(B1, 0.32), (B2, 0.48), (B3, 0.2)]
+\end{alltt}
+
+Working with distributions in Haskell is easy.
+Note in particular that extensions of~\(f\) and~\(g\) were not defined by the user.
+It might seem surprising since Haskell does not know anything about probabilities.
+However, distributions form a functor and a monad, therefore, Haskell was able to compute the extensions automatically.
+This example shows how readable code is and how closely it follows mathematical notation.
+\end{example}
+
+A one-shot game is a model of interacting decision makers.
+When presented with such a model, two questions come to mind.
+
+The first is a descriptive one.
+\emph{What happens when rational agents play a game?}
+Game theory seeks to answer this question by defining and analyzing solution concepts.
+In economics, stories, similar to the ones mentioned previously, are used to convince the reader that a given solutions concept is appropriate for rational agents.
+Furthermore, emphasis is placed on characterizing the set of payoffs achievable at equilibrium.
+
+The second question is a prescriptive one.
+\emph{How should the game and the agents be designed to reach a desired goal?}
+This question is prevalent in the control and systems' approach to game theory.
+Solution concept are once again central but are not enough.
+Algorithms reaching these solution concepts are also needed.
+
+Most answers to these questions are framed in the context of non-cooperative game theory.
+Non-cooperative game theory is a subset of game theory in which agents are selfish and only interested in maximizing their own utility.
+The agents understand the impact of other agents through actions.
+However, they would not think of collaborating with other agents in order to jointly increase their utility.
+This is why, the other agents are called opponents.
+In this context, a solution concept corresponds to action profiles with no profitable unilateral deviation, also known as equilibria.
+In this section, we show how different definitions of profitability give rise to the most common equilibria for one-shot games.
+To start, we get back to the most basic notion of profitability, best response.
+
+\begin{definition}[Best Response]
+\label{def:best_response}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(i \in \cI\) be an agent.
+The mapping
+\[
+\begin{aligned}
+\br\Ii \from \distribover{\cA\mI} &\tto \distribover{\cA\Ii} \\
+\alpha\mI &\mapsto \argmax\idxin{\alpha\Ii}{\distribover{\cA\Ii}} u\Ii \of {\alpha\Ii, \alpha\mI}
+\end{aligned}
+\]
+is called agent~\(i\)'s best-response correspondence for~\(u\).
+
+The mapping
+\[
+\begin{aligned}
+\br \from \distribover{\cA} &\tto \agsdistset{\cA} \\
+\alpha &\mapsto
+\begin{pmatrix}
+\br\one \of{\alpha\ag{-1}} \\
+\br\two \of{\alpha\ag{-2}} \\
+\vdots \\
+\br\ag{\CI} \of{\alpha\ag{-\CI}}
+\end{pmatrix}
+\end{aligned}
+\]
+is called the joint best-response correspondence for~\(u\).
+
+\end{definition}
+
+This definition is a case where \cref{sec:distribution_over_product_spaces} is relevant.
+In the context of \cref{def:best_response}, \(\alpha\ag{-1}\) represents the marginal distribution of~\(\alpha\) for agent~\(1\).
+Armed with this definition of best response, we can formally define Nash equilibria.
+
+\begin{definition}[Nash Equilibrium]
+\label{def:nash_equilibrium}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\alpha\Ii \in \distribover{\cA\Ii}\) be a distribution over action space~\(\cA\Ii\) for agent~\(i\).
+
+The distribution~\(\alpha = \agstuple{\alpha} \in \prod\idxin{i}{\cI} \distribover{\cA\Ii}\) is a Nash equilibrium for~\(u\) if and only one of the three following equivalent conditions is verified:
+\begin{itemize}
+\item The distribution~\(\alpha\) is a fixed point of the joint best-response correspondence for~\(u\), \ie~\(\alpha \in \br \of{\alpha}\).
+\item For all~\(i\) in~\(\cI\), \(\alpha\Ii \in \br\Ii \of {\alpha\mI}\).
+\item For all~\(i\) in~\(\cI\) and~\(a\Ii'\) in~\(\cA\Ii\),
+\(\expectof[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}
+\ge
+\expectof[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}}
+\).
+\end{itemize}
+\end{definition}
+
+The second classical solution concept developed for one-shot games is the correlated equilibrium.
+In the battle of the sexes example, we mentioned that correlated equilibria expand the notion of Nash equilibria from product distributions in~\(\prod\idxin{i}{\cI} \distribover{\cA\Ii}\) to distributions over the joint action space~\(\distribover{\cA} = \distribover{\agsset{\cA}}\).
+Before introducing the concept of correlated equilibrium, we need to introduce the closely related concept of correlated-equilibrium distribution.
+The intuition behind correlated equilibria is made clear in the upcoming~\cref{res:characterization_CE}.
+
+\begin{definition}[Correlated-equilibrium Distribution]
+\label{def:correlated-equilibrium_distribution}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\alpha \in \distribover{\cA}\) be a distribution over joint actions.
+
+The distribution~\(\alpha\) is a correlated-equilibrium distribution for~\(u\) if
+\[
+\begin{aligned}
+& \forall i \in \cI \comma
+a\Ii \in \cA\Ii \text{ such that } \alpha\Ii \elmt{a\Ii} > 0\comma
+a\Ii' \in \cA\Ii \comma \\
+& \qquad \expectcond[A \drawn \alpha]{u\Ii \of{a\Ii, A\mI}}{A\Ii = a\Ii}
+\ge
+\expectcond[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}}{A\Ii = a\Ii}.
+\end{aligned}
+\]
+\end{definition}
+
+Every Nash equilibrium is a correlated-equilibrium distribution.
+However, the converse is not true.
+
+\begin{definition}[Correlated Equilibrium]
+\label{def:correlated_equilibrium}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\cT\Ii\) be a set of types for agent~\(i\), and~\(\cT = \agsset{\cT}\) be the resulting joint type space.
+Let~\(\pi \in \distribover{\cT}\) be a distribution over joint types.
+Let~\(\sigma\Ii \from \cT\Ii \to \distribover{\cA\Ii}\) be a strategy for agent~\(i\), and~\(\sigma\) be the resulting joint strategy.
+Consider a random variable~\(\Theta\) drawn according to~\(\pi\).
+Construct the random vector~\(A = \agstuple{A}\) such that for all~\(i \in \cI\),~\(A\Ii = \sigma\Ii \of{\Theta\Ii}\).
+The distribution of~\(A\) is~\(\alpha\), such that, for any joint action~\(a \in \cA\), \(\alpha \elmt{a} = \sum\idxin{\theta}{\cT} \pi \elmt{\theta} \mult \sigma \of{\theta} \elmt{a}\).
+
+The pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for~\(u\) if~\(\alpha\) is a correlated-equilibrium distribution for~\(u\).
+\end{definition}
+
+The types are sometimes called signals.
+The key feature separating Nash equilibria from correlated equilibria is the potential correlation of the types.
+This is the correlation of the types that make the conditional expectation in \cref{def:correlated-equilibrium_distribution} different from the expectation in \cref{def:nash_equilibrium}.
+In the example of the coin toss for battle of the sexes, the types were actually extremely correlated since they were identical.
+The following example describes more interesting correlated signals and highlights how the conditional distributions are computed.
+
+\begin{example}[Correlated Signals]
+
+Consider the following protocol to generate correlated signals for two agents.
+A third party, independent of both agents, rolls a die.
+It then sends a signal to each agent.
+Agent~\(1\)'s signal~\(s\one\) is binary.
+It tells agent~\(1\) if the die's value is Low (1, 2, or 3) or High (4, 5, or 6).
+Agent~\(2\)'s signal\(s\two\) is ternary.
+It tells agent~\(2\) if the die's value is Small (1 or 2), Medium (3 or 4), or Large (5 or 6).
+The signals received by each agent are illustrated in \cref{fig:bos_correlated_dice}.
+
+\begin{figure}[ht]
+\centering
+\inputtikz{bos_correlated_dice}
+\ccaption[A pair of coupled signals generated from a die roll.]{
+Observing the signal received by agent~\(1\) gives some information concerning the signal received by agent~\(2\).
+This information is recovered through the application of Bayes' rule.
+}
+\label{fig:bos_correlated_dice}
+\end{figure}
+
+This protocol induces the following joint distribution over the pair~\(\tuple{s\one, s\two}\):
+\begin{equation*}
+\renewcommand{\arraystretch}{1.5}
+\begin{array}{rcc}
+                & \mathrm{Low} & \mathrm{High} \\
+\mathrm{Small}  & \frac{1}{3}  & 0             \\
+\mathrm{Medium} & \frac{1}{6}  & \frac{1}{6}  \\
+\mathrm{Large}  & 0            & \frac{1}{3}
+\end{array}.
+\end{equation*}
+
+Suppose both agents know the protocol.
+Therefore, they know the distribution of the die and of the pair of signals.
+When an agent receives a signal it infers something about the signal received by the other one.
+This inference is done through the application of Bayes' rule.
+The following facts are inferred:
+\begin{equation*}
+\begin{split}
+&\probacond{s\one = \mathrm{Low}}{s\two = \mathrm{Small}} = 1, \\
+&\probacond{s\one = \mathrm{High}}{s\two = \mathrm{Small}} = 0, \\
+\\
+&\probacond{s\one = \mathrm{Low}}{s\two = \mathrm{Medium}} = \tfrac{1}{2}, \\
+&\probacond{s\one = \mathrm{High}}{s\two = \mathrm{Medium}} = \tfrac{1}{2}, \\
+\\
+&\probacond{s\one = \mathrm{Low}}{s\two = \mathrm{Large}} = 0, \\
+&\probacond{s\one = \mathrm{High}}{s\two = \mathrm{Large}} = 1, \\
+\end{split}
+\qquad
+\begin{split}
+&\probacond{s\two = \mathrm{Small}}{s\one = \mathrm{Low}} = \tfrac{2}{3}, \\
+&\probacond{s\two = \mathrm{Medium}}{s\one = \mathrm{Low}} = \tfrac{1}{3}, \\
+&\probacond{s\two = \mathrm{Large}}{s\one = \mathrm{Low}} = 0, \\
+\\
+\\
+&\probacond{s\two = \mathrm{Small}}{s\one = \mathrm{High}} = 0, \\
+&\probacond{s\two = \mathrm{Medium}}{s\one = \mathrm{High}} = \tfrac{1}{3}, \\
+&\probacond{s\two = \mathrm{Large}}{s\one = \mathrm{High}} = \tfrac{2}{3}.
+\end{split}
+\end{equation*}
+
+\end{example}
+
+The distinction between correlated equilibria and correlated-equilibrium distributions is not emphasized in the literature.
+This blurring is due to a previously mentioned fact; the main focus of game theory in economics is to determine the set of payoffs achievable at equilibrium.
+Since a correlated equilibrium is defined by the correlated-equilibrium distribution it induces, the payoff sets of the two concepts are identical.
+The following proposition reinforces that point and gives useful characterizations of correlated equilibria.
+
+\begin{proposition}[Characterization of Correlated Equilibria]
+\label{res:characterization_CE}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\cT\Ii\) be a set of types for agent~\(i\), and~\(\cT = \agsset{\cT}\) be the resulting joint type space.
+Let~\(\pi \in \distribover{\cT}\) be a distribution over joint types.
+Let~\(\sigma\Ii \from \cT\Ii \to \distribover{\cA\Ii}\) be a strategy for agent~\(i\), and~\(\sigma\) be the resulting joint strategy.
+
+The pair~\(\tuple{\pi, \sigma}\) is a correlated equilibrium for~\(u\) if and only if one of the following three equivalent conditions is true:
+\begin{enumerate}[label=(\roman*), ref=\roman*]
+\item \label{cond:ce_cond} \(
+\begin{aligned}[t]
+& \forall i \in \cI \comma
+\theta\Ii \in \cT\Ii \comma
+a\Ii' \in \cA\Ii \comma \\
+& \qquad
+\begin{multlined}[3.835in]
+\expectcond[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\theta\Ii}, \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}
+\ge \\
+\expectcond[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}
+\end{multlined}
+\end{aligned}
+\)
+\item \label{cond:ce_mas} \(
+\begin{aligned}[t]
+& \forall i \in \cI \comma
+\sigma\Ii' \from \cT\Ii \to \distribover{\cA\Ii} \comma \\
+& \qquad \expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+\ge
+\expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii' \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+\end{aligned}
+\)
+\item \label{cond:ce_aumann} \(
+\begin{aligned}[t]
+& \forall i \in \cI \comma
+\phi\Ii \from \cA\Ii \to \cA\Ii \comma \\
+& \qquad \expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+\ge
+\expectof[\Theta \drawn \pi]{u\Ii \of{\phi\Ii \compo \sigma\Ii \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+\end{aligned}
+\)
+\end{enumerate}
+\end{proposition}
+
+\Cref{cond:ce_cond}, introduced in~\cite{aumann:1974}, tests that for every signal, the action prescribed by the strategy is optimal.
+This is the definition used in the battle of the sexes example.
+\Cref{cond:ce_mas}, introduced in~\cite{shoam_leyton-brown:2008}, tests the strategy against all the other possible strategies.
+\Cref{cond:ce_aumann}, introduced in~\cite{aumann:1987}, tests the strategy against the restricted set of swap strategies.
+Swap functions~\(\phi\Ii\)s make recommendations based on the action prescribed by the strategies and not the full signal received.
+
+\begin{proof}
+The proof is split in the four following steps:
+\begin{enumerate}
+\item \Cref{cond:ce_cond} implies \cref{cond:ce_mas}.
+\item \Cref{cond:ce_mas} implies \cref{cond:ce_aumann}.
+\item Any pair \(\tuple{\pi, \sigma}\) verifying \cref{cond:ce_aumann} is a correlated equilibrium, \ie induces a correlated-equilibrium distribution.
+\item Any correlated-equilibrium distribution~\(\alpha\) can be induced by a pair \(\tuple{\pi, \sigma}\) satisfying \cref{cond:ce_cond}.
+\end{enumerate}
+
+The actual proofs are the following:
+\begin{enumerate}
+\item
+Let~\(\tuple{\pi, \sigma}\) be a pair satisfying \cref{cond:ce_cond}.
+Let~\(i \in \cI\), \(\sigma\Ii' \from \cT\Ii \to \distribover{\cA\Ii}\), \(\theta\Ii \in \cT\Ii\), and~\(a\Ii' \in \cA\Ii\).
+By definition, the following inequality holds:
+\[
+\begin{multlined}[4.15in]
+\expectcond[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\theta\Ii}, \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}
+\ge \\
+\expectcond[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii}.
+\end{multlined}
+\]
+Multiply both sides of the inequality by~\(\probaof[\Theta \drawn \pi]{\Theta\Ii = \theta\Ii}\), then sum over~\(\theta\Ii\) in~\(\cT\Ii\).
+The left-hand side becomes
+\[
+\begin{multlined}[4.15in]
+\sum\idxin{\theta\Ii}{\cT\Ii} \expectcond[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\theta\Ii}, \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii} \mult \probaof[\Theta \drawn \pi]{\Theta\Ii = \theta\Ii}
+= \\
+\expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}.
+\end{multlined}
+\]
+Similarly, the right hand side yields
+\[
+\begin{multlined}[4.15in]
+\sum\idxin{\theta\Ii}{\cT\Ii} \expectcond[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}{\Theta\Ii = \theta\Ii} \mult \probaof[\Theta \drawn \pi]{\Theta\Ii = \theta\Ii}
+= \\
+\expectof[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}.
+\end{multlined}
+\]
+Therefore,
+\[
+\expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+\ge
+\expectof[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}}.
+\]
+This inequality holds for any~\(a\Ii'\).
+Therefore, the left-hand side is greater than any convex combinations of the right-hand side.
+In particular, it is greater than
+\[
+\begin{multlined}[4.15in]
+\sum\idxin{a\Ii'}{\cA\Ii} \expectof[\Theta \drawn \pi]{u\Ii \of{a\Ii', \sigma\mI \of{\Theta\mI}}} \mult \probaof[\Theta \drawn \pi]{\sigma\Ii' \of {\Theta\Ii} = a\Ii'}
+= \\
+\expectof[\Theta \drawn \pi]{u\Ii \of{\sigma\Ii' \of{\Theta\Ii}, \sigma\mI \of{\Theta\mI}}}
+,
+\end{multlined}
+\]
+which yields \cref{cond:ce_mas}.
+
+\item Let~\(\tuple{\pi, \sigma}\) be a pair satisfying \cref{cond:ce_mas}.
+Let~\(i \in \cI\) and \(\phi\Ii \from \cA\Ii \to \cA\Ii\).
+Using the functor extension from \cref{note:canonical_extensions}, the composition~\(\phi\Ii \compo \sigma\Ii\) is an element of~\(\cT\Ii \to \distribover{\cA\Ii}\).
+Therefore, \cref{cond:ce_aumann} is a direct consequence of \cref{cond:ce_mas}.
+
+\item Let~\(\tuple{\pi, \sigma}\) be a pair satisfying \cref{cond:ce_aumann}.
+Let~\(\Theta\) be a random variable drawn according to~\(\pi\) and~\(A\) the induced random variable over the joint action set.
+Denote by~\(\alpha\) the distribution of~\(A\).
+Let~\(i \in \cI\), \(a\Ii \in \cA\Ii\) such that~\(\alpha\Ii \elmt{a\Ii} > 0\), and \(a\Ii' \in \cA\Ii\).
+Define \(\phi\) by \(\phi \of{a\Ii} = a\Ii'\) and \(\phi \of{a\Ii''} = a\Ii''\) for all~\(a\Ii'' \in \cA\Ii \setminus \set{a\Ii}\).
+\Cref{cond:ce_aumann} translates to
+\[
+\expectof[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}
+\ge
+\expectof[A \drawn \alpha]{u\Ii \of{\phi\Ii \of {A\Ii}, A\mI}}
+.
+\]
+Applying the law of total probability for the left-hand side yields
+\[
+\begin{multlined}[4.15in]
+\expectcond[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}{A\Ii = a\Ii} \mult \probaof[A \drawn \alpha]{A\Ii = a\Ii}
+\, + \\
+\expectcond[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}{A\Ii \neq a\Ii} \mult \probaof[A \drawn \alpha]{A\Ii \neq a\Ii},
+\end{multlined}
+\]
+or, more concisely,
+\[
+\begin{multlined}[4.15in]
+\expectcond[A \drawn \alpha]{u\Ii \of{a\Ii, A\mI}}{A\Ii = a\Ii} \mult \alpha\Ii \elmt {a\Ii}
+\, + \\
+\expectcond[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}{A\Ii \neq a\Ii} \mult \onem{\alpha\Ii \elmt {a\Ii}}.
+\end{multlined}
+\]
+Similarly, by using the definition of~\(\phi\Ii\) and the law of total probability, the right-hand side is equal to
+\[
+\begin{multlined}[4.15in]
+\expectcond[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}}{A\Ii = a\Ii} \mult \alpha\Ii \elmt {a\Ii}
+\, + \\
+\expectcond[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}{A\Ii \neq a\Ii} \mult \onem{\alpha\Ii \elmt {a\Ii}}.
+\end{multlined}
+\]
+Subtracting~\(\expectcond[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}{A\Ii \neq a\Ii} \mult \onem{\alpha\Ii \elmt {a\Ii}}\) from each side and then dividing by \(\alpha \elmt{a\Ii}\), which is positive, gives the correlated-equilibrium distribution condition for~\(\alpha\).
+
+\item
+Let~\(\alpha\) be a correlated-equilibrium distribution.
+For agent~\(i \in \cI\), define the types to be its actions, \(\cT\Ii = \cA\Ii\), and \(\sigma\Ii\) to be the identity function over~\(\cA\Ii\).
+Furthermore, let~\(\pi = \alpha\).
+By definition, the distribution~\(\alpha\) satisfies the inequality in \cref{def:correlated-equilibrium_distribution}.
+This immediately translates in the pair~\(\tuple{\pi, \sigma}\) verifying \cref{cond:ce_cond}.
+\end{enumerate}
+\end{proof}
+
+To conclude this section, we look at equilibria from a different perspective.
+In a game setting, the actions taken by a set of agents induce a distribution \(\alpha \in \distribover{\cA}\) over the joint action set.
+Equilibria are distributions in which no rational agent has an incentive to unilaterally deviate.
+This means that defining an equilibrium concept boils down to choosing the two following elements:
+\begin{itemize}
+\item A set of feasible distributions over the joint action set.
+\item A set of incentive constraints for each agent.
+\end{itemize}
+
+For example, a Nash equilibrium is a product distribution with the simple incentive constraint from \cref{def:nash_equilibrium}.
+Similarly, a correlated-equilibrium distribution is an unrestricted distribution with the conditional incentive constraint from \cref{def:correlated-equilibrium_distribution}.
+
+It is natural to wonder what happens when looking at different combinations of feasible distributions and incentive constraints.
+On the one hand, a product distribution with the conditional incentive constraint is a Nash equilibrium, since the independence renders the conditional superfluous.
+On the other hand, an unrestricted distribution with the simple incentive constraint yields a new equilibrium concept called a coarse correlated equilibrium.
+
+\begin{definition}[Coarse Correlated Equilibrium]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\alpha \in \distribover{\cA}\) be a distribution over joint actions.
+
+The distribution~\(\alpha\) is a coarse correlated equilibrium for~\(u\) if
+\[
+\forall i \in \cI \comma
+\forall a\Ii' \in \cA\Ii \comma
+\expectof[A \drawn \alpha]{u\Ii \of{A}}
+\ge
+\expectof[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}}
+.
+\]
+\end{definition}
+
+Every correlated equilibrium distribution is a coarse correlated equilibrium.
+Indeed, the inequality defining a coarse correlated equilibrium follows from the one defining a correlated-equilibrium distributions by multiplying each side of the inequality by~\(\probaof[A \drawn \alpha]{A\Ii = a\Ii}\) and summing over~\(a\Ii \in \cA\Ii\).
+This observation, along with the relationship between Nash equilibria and correlated-equilibrium distributions, is captured in the following proposition.
+
+\begin{proposition}[Hierarchy of Equilibria]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(\alpha \in \distribover{\cA}\) be a distribution over joint actions.
+
+If~\(\alpha\) is a Nash equilibrium for~\(u\), then~\(\alpha\) is also a correlated-equilibrium distribution for~\(u\).
+
+If~\(\alpha\) is a correlated-equilibrium distribution for~\(u\), then~\(\alpha\) is also a coarse correlated equilibrium for~\(u\).
+
+With the standard abbreviations for Nash equilibria~(NE), correlated-equilibrium distributions~(CE), and coarse correlated equilibria~(CCE), this proposition is written concisely as follows:
+\[
+\mathrm{NE} \subset \mathrm{CE} \subset \mathrm{CCE}.
+\]
+\end{proposition}
+
+This last proposition explains the importance of knowing that Nash equilibria always exist.
+Indeed, the existence of Nash equilibria implies the existence of correlated-equilibrium distributions and coarse correlated equilibria.
+Therefore, the following section is dedicated to the proof of Nash's seminal result.
+Elements of this proof will be used to prove the existence of the solution concept introduced in this research.
+
+\section{Nash's Existence Theorem}
+\label{sec:nash_existence_theorem}
+
+The existence of Nash equilibria was previously mentioned.
+Here is the formal statement of this result.
+
+\begin{theorem}[Nash's Existence~\cite{nash:1951}]
+\label{res:nash_existence}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+
+There exists a product distribution~\(\alpha \in \agsdistset{\cA}\) which is a Nash equilibrium for~\(u\).
+\end{theorem}
+
+To prove it, we will use the definition of Nash equilibria in term of fixed points.
+The best-response correspondence restricted to product distributions~\(\agsdistset{\cA}\) is as an element of~\(\agsdistset{\cA} \tto \agsdistset{\cA}\).
+The set~\(\agsdistset{\cA}\) is a product of finite simplices and as such is non-empty, compact and a convex subset of an Euclidean space.
+Brouwer's fixed-point theorem is a classical result guaranteeing the existence of fixed point for functions over this kind of sets.
+
+\begin{theorem}[Brouwer's Fixed-point Theorem]
+Let~\(\cX\) be a non-empty, compact and convex subset of some Euclidean space.
+Let~\(f \from \cX \to \cX\) be a continuous function.
+Then~\(f\) has a fixed point~\(x\opt\) such that~\(x\opt = f \of {x\opt}\).
+\end{theorem}
+
+An illustration of this theorem is given in \cref{fig:brouwer_fixed_point}.
+Kakutani's fixed point theorem is an extension to Brouwer's fixed-point theorem dealing with correspondences instead of functions.
+\Cref{fig:kakutani_fixed_point} provides the corresponding illustration.
+
+\begin{figure}[th]
+\centering
+\inputtikz{brouwer_theorem}
+\ccaption[Illustration of Brouwer's fixed-point theorem.]{
+The solid line is the graph of a continuous function~\(f\) from the interval~\(\interval{0}{1}\) to itself.
+The interval~\(\interval{0}{1}\) is a non-empty, compact and convex subset of the Euclidean space~\(\bR\).
+The dashed line is the graph of the identity function on the same interval.
+The filled circles correspond to fixed points of~\(f\).
+}
+\label{fig:brouwer_fixed_point}
+\end{figure}
+
+\begin{figure}[th]
+\centering
+\inputtikz{kakutani_theorem}
+\ccaption[Illustration of Kakutani's fixed-point theorem.]{
+The solid lines and the shaded area represent the closed graph of a correspondence~\(f\) from the interval~\(\interval{0}{1}\) to itself.
+For all~\(x \in \interval{0}{1}\), \(f \of {x}\) is non empty and convex.
+The interval~\(\interval{0}{1}\) is a non-empty, compact and convex subset of the Euclidean space~\(\bR\).
+The dashed line is the graph of the identity function on the same interval.
+The filled circles and the bold segment correspond to fixed points of~\(f\).
+}
+\label{fig:kakutani_fixed_point}
+\end{figure}
+
+\begin{theorem}[Kakutani's Fixed-point Theorem]
+Let~\(\cX\) be a non-empty, compact and convex subset of some Euclidean space.
+Let~\(f \from \cX \tto \cX\) be a correspondence on~\(\cX\) with a closed graph and the property that for all~\(x \in \cX\), \(f \of {x}\) is non empty and convex.
+Then~\(f\) has a fixed point, \(x\opt\) such that~\(x\opt \in f \of {x\opt}\).
+\end{theorem}
+
+The following definition explicits what a closed graph for a correspondence means.
+
+\begin{definition}[Correspondence with a Closed Graph]
+Let~\(\cX\) be a non-empty, compact and convex subset of some Euclidean space.
+Let~\(f \from \cX \tto \cX\) be a correspondence on~\(\cX\).
+
+The graph of~\(f\) is closed if and only if, for all converging sequence \(\tuple{\tuple{x\Tt, y\Tt}}\idxin{t}{\bN}\), such that~\(y\Tt \in f \of {x\Tt}\), with limit point \(\tuple{x\opt, y\opt}\), \(y\opt \in f \of {x\opt}\).
+\end{definition}
+
+Brouwer's fixed-point theorem uses continuous functions on which we have a strong grasp.
+It is a good stepping stone to understand Kakutani's fixed-point theorem.
+The core elements of these two fixed-point theorems are present in Brouwer's theorem.
+Kakutani's theorem irons out the details for correspondences.
+Similarly, \cref{res:nash_existence} is proven in  two step.
+First, we use a function approximating the best-response correspondence and apply Brouwer's theorem to prove the existence of approximate Nash equilibria.
+Then, we make the necessary adjustments to apply the full-fledged Kakutani's theorem and prove the existence of exact Nash equilibria.
+This approach helps building insight about the Nash existence theorem.
+
+\subsection{Existence of Approximate Nash Equilibria}
+
+Every equilibrium definition includes an incentive constraint, which takes the form of a maximization.
+Sometimes, the exact maximization is not required, and approximate maximization is acceptable.
+For example, the definition of an approximate Nash equilibrium is the following.
+Let~\(\epsilon > 0\) be a small additive factor.
+A product distribution~\(\alpha \in \agsdistset{\cA}\) is an~\(\epsilon\) Nash equilibrium for~\(u\) if
+\[
+\forall i \in \cI \comma
+a\Ii' \in \cA\Ii \comma
+\expectof[A \drawn \alpha]{u\Ii \of{A\Ii, A\mI}}
+\ge
+\expectof[A \drawn \alpha]{u\Ii \of{a\Ii', A\mI}} - \epsilon
+.
+\]
+Correlated equilibria and coarse correlated equilibria are similarly extended to~\(\epsilon\) correlated equilibrium and~\(\epsilon\) coarse correlated equilibria by relaxing the incentive constraints by~\(\epsilon\).
+
+To prove the existence of an approximate Nash equilibrium, we use Brouwer's fixed-point theorem for a Gibbs-smoothed best-response function.
+
+\begin{definition}[Gibbs-smoothed Best Response]
+\label{def:gibbs-smoothed_best_response}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(i \in \cI\) be an agent.
+The function
+\[
+\gbr\Ii \from \distribover{\cA\mI} \to \distribover{\cA\Ii},
+\]
+such that, for all~\(\alpha\mI \in \distribover{\cA\mI}\) and~\(a\Ii \in \cA\Ii\),
+\[
+\gbr\Ii \of{\alpha\mI} \elmt{a\Ii}
+=
+\frac{\ex^{\frac{1}{\tau} u \of {a\Ii, \alpha\mI}}}{\sum\idxin{a\Ii'}{\cA\Ii}\ex^{\frac{1}{\tau} u \of {a\Ii', \alpha\mI}}}
+,
+\]
+is called agent~\(i\)'s Gibbs-smoothed best response with parameter~\(\tau\) for~\(u\).
+\end{definition}
+
+The following note gives a little background about the Gibbs distribution.
+
+\newcommand{\gibbsExp}[3][]{\ex \pow {#1\frac{1}{#2}#3}}
+\newcommand{\gibbs}[7][]{\frac{\gibbsExp[#1]{#2}{#3{#5}#4}}{\sum\idxin{#6}{#7} \gibbsExp[#1]{#2}{#3{#6}#4}}}
+
+\begin{note}[Gibbs Distribution]
+\label{note:gibbs_distribution}
+The Gibbs distribution arises in statistical physics.
+Consider a system made of a large number of particles.
+The system, as a whole, can take configurations from the set~\(\cX\).
+In configuration~\(x \in \cX\), the energy of the system is~\(E \of x\).
+Nature seeks to minimize the energy of the system.
+However, the presence of thermal noise creates a stochastic disturbance in this minimization process.
+The Gibbs distribution characterizes this disturbance.
+Let~\(T\) be the temperature of the system.
+The probability that the system is in configuration~\(x\) is \(G_{T} \elmt{x} = \gibbs[-]{\rlK T}{E \of}{}{x}{x'}{\cX}\), where~\(\rlK\) is the Boltzmann constant.
+For any non-zero temperature, the Gibbs distribution assigns a positive probability to every configuration.
+As the temperature goes to infinity, the distribution converges to the uniform distribution over~\(\cX\).
+As the temperature decreases, the distribution puts more weight on the configurations of minimal energy.
+In the limit, as the temperature approaches zero, the Gibbs distribution converges to the uniform distribution over the configurations of minimal energy.
+
+By making a couple of changes, the Gibbs distribution is relevant for decision making.
+In a decision-making problem, the agent seeks an action~\(a\) maximizing its utility function~\(u\).
+Therefore, the following Gibbs-shaped distribution is of interest \(G_{\tau} \elmt{a} = \gibbs{\tau}{u \of}{}{a}{a'}{\cA}\).
+As the parameter~\(\tau\) goes to zero, distribution~\(G_{\tau}\) concentrates its weight on utility-maximizing actions.
+This property explains why, for small~\(\tau\), the Gibbs distribution is used to define a function approximating the best-response correspondence.
+\end{note}
+
+The following proposition formalizes the fact that the Gibbs distribution approaches an optimal distribution as the parameter goes to zero.
+
+\newcommand{\umax}{u_{\mathrm{max}}}
+\newcommand{\umin}{u_{\mathrm{min}}}
+\newcommand{\uDelta}{u_{\Delta}}
+\newcommand{\udelta}{u_{\delta}}
+\newcommand{\gibbsua}{\gibbs{\tau}{u \of}{}{a}{a'}{\cA}}
+\newcommand{\uopt}{u_{\mathrm{opt}}}
+\newcommand{\urest}{u_{\mathrm{rest}}}
+% udelta time n minus n star
+\newcommand{\unmn}{\uDelta\grpparen{\frac{n}{n\opt} - 1}}
+\newcommand{\unmne}{\frac{\uDelta}{\epsilon}\grpparen{\frac{n}{n\opt} - 1}}
+
+\begin{proposition}[Approximate Optimality of the Gibbs Distribution]
+\label{res:approximate_optimality_gibbs_distribution}
+Let \(u \from \cA \to \bR\) be a utility function over finite action set~\(\cA\) with cardinality~\(n = \card{\cA}\).
+Let \(\cA\opt = \argmax\idxin{a}{\cA} u \of {a}\) be the set of maximizers of~\(u\) with cardinality~\(n\opt = \card{\cA\opt}\).
+Define the four following quantities:
+\[
+\begin{split}
+\begin{aligned}
+\umax &= \max\idxin{a}{\cA} u \of a, \\
+\umin &= \min\idxin{a}{\cA} u \of a,
+\end{aligned}
+\end{split}
+\qquad\qquad
+\begin{split}
+\begin{aligned}
+\uDelta &= \umax - \umin, \\
+\udelta &= \umax - \max\idxin{a}{\cA \setminus \cA\opt} u\of{a}.
+\end{aligned}
+\end{split}
+\]
+Let~\(0 < \epsilon < \unmn\), \(0 \le \tau \le \frac{\udelta}{\ln \of{\unmne}}\), and \(\alpha\) the Gibbs distribution with parameter~\(\tau\), \ie for~\(a \in \cA\), \(\alpha \elmt a = \gibbsua\).
+
+The distribution~\(\alpha\) is~\(\epsilon\) optimal for~\(u\).
+\end{proposition}
+
+\begin{proof}
+We only consider the case where~\(u\) is not a constant function.
+Therefore, the set~\(\cA\opt\) is strictly included in~\(\cA\) which guarantees~\(\unmn > 0\), and ~\(\udelta > 0\).
+This, in turn, guarantees the existence of~\(\epsilon\) and~\(\tau\) satisfying the aforementioned constraints.
+If the utility function is constant, any distribution is optimal and therefore \(\epsilon\) optimal for~\(u\).
+
+The proof is straightforward.
+We compute~\(u \of {\alpha}\), compare it to~\(\umax\), and show that the difference~\(\umax - u \of {\alpha}\) is smaller than~\(\epsilon\).
+Let's first, explicit~\(u \of {\alpha}\) and split the optimal actions from the rest of them,
+\[
+\begin{aligned}
+u \of {\alpha}
+&=
+\sum\idxin{a}{\cA} \gibbsua u \of {a} \\
+&=
+\sum\idxin{a}{\cA} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{\sum\idxin{a'}{\cA} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} u \of{a} \\
+&=
+\sum\idxin{a}{\cA} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{\sum\idxin{a'}{\cA\opt} \gibbsExp{\tau}{\grpbrack{\umax - \umax}} + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} u \of{a} \\
+&=
+\sum\idxin{a}{\cA} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} u \of{a} \\
+&=
+\begin{multlined}[t][4.02in]
+\sum\idxin{a}{\cA\opt} \frac{1}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} \umax
++ \\
+\sum\idxin{a}{\cA \setminus \cA\opt}
+\frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} u \of {a}
+\end{multlined} \\
+&=
+\begin{multlined}[t][4.02in]
+\underbrace{\frac{n\opt}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} \umax}_{\uopt}
++ \\
+\underbrace{\sum\idxin{a}{\cA \setminus \cA\opt}
+\frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} u \of {a}}_{\urest}.
+\end{multlined}
+\end{aligned}
+\]
+Rewrite~\(\umax\) as a sum with a similar structure,
+\[
+\begin{aligned}
+\umax
+&=
+\begin{multlined}[t][3.9in]
+\frac{n\opt}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of {a'} - \umax}}} \umax
++ \\
+\frac{\sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of {a'} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of {a'} - \umax}}} \umax
+\end{multlined} \\
+&=
+\uopt
++
+\frac{\sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of {a'} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of {a'} - \umax}}} \umax.
+\end{aligned}
+\]
+Therefore,
+\[
+\begin{aligned}
+\umax - u \of {\alpha}
+&=
+\umax - \urest\\
+&=
+\sum\idxin{a}{\cA \setminus \cA\opt} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} \grpparen{\umax - u \of {a}} \\
+&\le
+\sum\idxin{a}{\cA \setminus \cA\opt} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt + \sum\idxin{a'}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a'} - \umax}}} \uDelta \\
+&\le
+\sum\idxin{a}{\cA \setminus \cA\opt} \frac{\gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}}}{n\opt} \uDelta \\
+&=
+\frac{\uDelta}{n\opt} \sum\idxin{a}{\cA \setminus \cA\opt} \gibbsExp{\tau}{\grpbrack{u \of{a} - \umax}} \\
+&\le
+\frac{\uDelta}{n\opt} \sum\idxin{a}{\cA \setminus \cA\opt} \gibbsExp[-]{\tau}{\udelta}\\
+&\le
+\frac{\uDelta}{n\opt} \grpparen{n - n\opt} \gibbsExp[-]{\tau}{\udelta}\\
+&=
+\unmn \gibbsExp[-]{\tau}{\udelta}.
+\end{aligned}
+\]
+
+Expand the inequality satisfied by~\(\tau\) as follows:
+\[
+\begin{aligned}
+\tau &\le \frac{\udelta}{\ln \of{\unmne}} \\
+\frac{1}{\tau} &\ge \frac{1}{\udelta} \ln \of{\unmne} \\
+-\frac{\udelta}{\tau} &\le \ln \of{\frac{\epsilon}{\unmn}}\\
+\gibbsExp[-]{\tau}{\udelta} &\le \frac{\epsilon}{\unmn}.
+\end{aligned}
+\]
+Plugging the result in~\(\umax - u \of{\alpha} \le \unmn \gibbsExp[-]{\tau}{\udelta}\) proves that~\(\alpha\) is~\(\epsilon\) optimal for~\(u\).
+\end{proof}
+
+Combining \cref{def:gibbs-smoothed_best_response} and \cref{res:approximate_optimality_gibbs_distribution} yields one possible definition for an approximate best-response function.
+
+\begin{definition}[Approximate Best Response]
+\newcommand{\uiDelta}{u\Ii^{\Delta}}
+\newcommand{\uidelta}{u\Ii^{\delta}}
+
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Define the following quantities, for agent~\(i \in \cI\):
+\[
+\begin{aligned}
+\cA\Ii\opt \of {a\mI} &= \argmax\idxin{a\Ii}{\cA\Ii} u\Ii \of{a\Ii, a\mI},\\
+n\Ii &= \card{\cA\Ii}, \\
+n\Ii\opt &= \min\idxin{a\mI}{\cA\mI} \card{\cA\Ii\opt \of{a\mI}}, \\
+\uiDelta &= \max\idxin{a\mI}{\cA\mI} \grpbrack{\max\idxin{a\Ii}{\cA\Ii} u\Ii \of {a\Ii, a\mI} - \min\idxin{a\Ii}{\cA\Ii} u\Ii \of {a\Ii, a\mI}}, \\
+\uidelta &= \min\idxin{a\mI}{\cA\mI} \grpbrack{\max\idxin{a\Ii}{\cA\Ii} u\Ii \of {a\Ii, a\mI} - \max\idxin{a\Ii}{\cA\Ii \setminus \cA\Ii\opt \of {a\mI}} u\Ii \of {a\Ii, a\mI}}.
+\end{aligned}
+\]
+Let~\(0 < \epsilon < \min\idxin{i}{\cI} \uiDelta \grpparen{\frac{n\Ii}{n\Ii\opt} - 1}\).
+From now on, we will refer to this technical condition as \emph{\(\epsilon\) small enough for~\(u\)}.
+Define agent~\(i\)'s \(\epsilon\) best-response function for~\(u\) by~\(\sbr\Ii = \gbr[\tau\Ii]\Ii\), for~\(\tau\Ii = \frac{\uidelta}{\ln \of{\frac{\uiDelta}{\epsilon} \grpparen{\frac{n\Ii}{n\Ii\opt} - 1}}}\).
+As the name indicates, for~\(\alpha\mI \in \distribover{\cA\mI}\), the distribution~\(\sbr\Ii \of {\alpha\mI}\) is \(\epsilon\) optimal for~\(u\Ii \of{ \cdot, \alpha\mI}\).
+Accordingly, the function
+\[
+\begin{aligned}
+\sbr \from \distribover{\cA} &\to \agsdistset{\cA} \\
+\alpha &\mapsto
+\begin{pmatrix}
+\sbr\one \of{\alpha\ag{-1}} \\
+\sbr\two \of{\alpha\ag{-2}} \\
+\vdots \\
+\sbr\ag{\CI} \of{\alpha\ag{-\CI}}
+\end{pmatrix}
+\end{aligned}
+\]
+is called the joint~\(\epsilon\)~best response for~\(u\).
+
+\end{definition}
+
+By definition, the joint~\(\epsilon\) best response is approximately optimal.
+This is the first condition required for proving the existence of approximate Nash equilibria.
+The second condition needed is its continuity.
+
+\begin{proposition}[Continuity of the Approximate Best-response Function]
+Let \(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game and~\(\epsilon\) small enough for~\(u\).
+
+The joint~\(\epsilon\) best response for~\(u\) is continuous.
+\end{proposition}
+
+\begin{proof}
+The function~\(\sbr\) is vector valued.
+It is continuous if and only if it is componentwise continuous.
+Let~\(i \in \cI\) be an agent.
+We need to prove that~\(\alpha \mapsto \sbr\Ii \of{\alpha\mI}\) is continuous.
+The function~\(\alpha \mapsto \alpha\mI\) is continuous.
+Therefore, it is sufficient to prove that~\(\sbr\Ii\) is continuous in order to prove that~\(\sbr\) is continuous.
+
+The function~\(\sbr\Ii\) takes values in~\(\distribover{\cA\Ii}\).
+It can be interpreted as a vector-valued function, with as many entries as elements in~\(\cA\Ii\).
+Therefore, it is sufficient to prove that~\(\alpha\mI \mapsto \sbr\Ii \of{\alpha\mI} \elmt{a\Ii}\) is continuous for a fixed~\(a\Ii \in \cA\Ii\).
+By definition
+\[
+\sbr\Ii \of{\alpha\mI} \elmt{a\Ii}
+=
+\frac{\ex^{\frac{1}{\tau\Ii} u\Ii \of {a\Ii, \alpha\mI}}}{\sum\idxin{a\Ii'}{\cA\Ii}\ex^{\frac{1}{\tau\Ii} u\Ii \of {a\Ii', \alpha\mI}}}.
+\]
+The mapping is therefore continuous as it is a composition of continuous functions: expectation, division, exponential, and sum.
+\end{proof}
+
+With the definition and proposition in place, we can now prove the existence of approximate Nash equilibria.
+
+\begin{theorem}[Existence of Approximate Nash Equilibria]
+\label{res:approximate_nash_existence}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game and~\(\epsilon > 0\).
+
+The exists an \(\epsilon\)~Nash equilibrium for~\(u\).
+\end{theorem}
+
+\begin{proof}
+A distribution~\(\alpha \in \agsdistset{\cA}\) forming a fixed point of the joint \(\epsilon\) best response for~\(u\), \ie verifying~\(\alpha = \sbr \of{\alpha}\), is an~\(\epsilon\)~Nash equilibrium for~\(u\).
+Therefore, proving the existence of such a fixed point is a sufficient condition to proving the theorem.
+
+As was previously mentioned, the set~\(\agsdistset{\cA}\) is a product of finite simplices and as such is non-empty, compact and a convex subset of an Euclidean space.
+The joint~\(\epsilon\)~best response for~\(u\) is continuous.
+Therefore, by applying Brouwer's fixed-point theorem, we conclude that such a fixed point exist.
+\end{proof}
+
+\subsection{Existence of Exact Nash Equilibria}
+
+This section is dedicated to the proof of Nash's existence theorem.
+The proof of \cref{res:approximate_nash_existence} gives some intuition regarding the existence of Nash equilibria.
+The following proof contains the details.
+
+\begin{proof}[Proof of \cref{res:nash_existence}]
+A distribution~\(\alpha \in \agsdistset{\cA}\) forming a fixed point of the joint best response for~\(u\), \ie verifying~\(\alpha = \br \of{\alpha}\), is a Nash equilibrium for~\(u\).
+Therefore, proving the existence of such a fixed point is a sufficient condition to proving the theorem.
+
+To apply Kakutani's fixed point theorem we need to prove the four following facts:
+\begin{itemize}
+\item The set~\(\agsdistset{\cA}\) is non-empty, compact and a convex subset of an Euclidean space.
+\item For~\(\alpha \in \agsdistset{\cA}\), \(\br \of {\alpha}\) is non-empty.
+\item For~\(\alpha \in \agsdistset{\cA}\), \(\br \of {\alpha}\) is convex.
+\item The best-response correspondence has a closed graph.
+\end{itemize}
+
+The first two facts are immediately proven.
+The set~\(\agsdistset{\cA}\) is a product of finite simplices and as such is non-empty, compact and a convex subset of an Euclidean space.
+Let~\(\alpha \in \agsdistset{\cA}\).
+There exists a best response for each agent which guarantees that~\(\br \of {\alpha}\) is non-empty.
+
+We now prove that the set~\(\br \of {\alpha}\) is convex, for~\(\alpha\) a distribution in \(\agsdistset{\cA}\).
+Let~\(i\) be an agent, \(\beta\Ii\) and~\(\gamma\Ii\) be two elements of~\(\br\Ii \of {\alpha\mI}\),  and~\(\theta \in \interval{0}{1}\).
+Since~\(\beta\Ii\) and~\(\gamma\Ii\) are both best responses to~\(\alpha\mI\), it is the case that~\(u\Ii \of {\beta\Ii, \alpha\mI} = u\Ii \of {\gamma\Ii, \alpha\mI}\).
+By linearity of the expectation, we conclude that
+\[
+u\Ii \of {\beta\Ii, \alpha\mI}
+=
+u\Ii \of {\theta \beta\Ii + \onem{\theta} \gamma\Ii, \alpha\mI}
+=
+u\Ii \of {\gamma\Ii, \alpha\mI}.
+\]
+As a result, the convex combination~\(\theta \beta\Ii + \onem{\theta} \gamma\Ii\) is also an element of~\(\br\Ii \of {\alpha\mI}\).
+Therefore, the set~\(\br\Ii \of {\alpha\mI}\) is convex.
+The set~\(\br \of {\alpha}\) is the Cartesian product of convex sets and as such is convex.
+
+We finally prove that the best-response correspondence has a closed graph.
+Let~\(\alpha = \seqin{\alpha}{\tm}{t}{\bN}\) and~\(\beta = \seqin{\beta}{\tm}{t}{\bN}\) be sequences in~\(\agsdistset{\cA}\) such that for all~\(t\) in~\(\bN\), \(\beta\Tt \in \br \of {\alpha\Tt}\).
+Suppose that~\(\alpha\) converges to~\(\alpha\opt\) and~\(\beta\) converges to~\(\beta\opt\).
+Let~\(i\) be an agent and~\(a\Ii\) an action for this agent.
+For~\(t \in \bN\), the fact that~\(\beta\Tt \in \br \of {\alpha\Tt}\) implies that~\(\beta\Tt\Ii \in \br\Ii \of {\alpha\mI\Tt}\).
+This translates to~\(u\Ii \of {\beta\Ii\Tt, \alpha\mI\Tt} \ge u\Ii \of {a\Ii, \alpha\mI\Tt}\).
+The utility function is continuous in the joint action.
+Therefore, in the limit~\(u\Ii \of {\beta\Ii\opt, \alpha\mI\opt} \ge u\Ii \of {a\Ii, \alpha\mI\opt}\) which proves that~\(\beta\Ii\opt \in \br\Ii \of{\alpha\mI\opt}\).
+This fact is true for any agent and therefore~\(\br\) has a closed graph.
+
+Everything is now in place to apply Kakutani's fixed-point theorem and to conclude that an exact Nash equilibrium always exists.
+\end{proof}
+
+At first glance, it is easier to prove the existence of an exact equilibrium rather than an approximate one.
+However, note that most of the approximate equilibrium section deals with defining the~\(\epsilon\)~best response.
+The actual proof is shorter and uses a simpler fixed-point theorem.

@@ -1,0 +1,83 @@
+We developed the framework of \acp{eee} in stochastic games.
+This research started by trying to apply game-theoretic results to decentralized control.
+Using game theory to design a controller entails computing equilibrium strategies for a specific game.
+For decentralized controllers, computing the strategies in a decentralized fashion through learning is an undeniable advantage.
+Stochastic games are of particular interest for controls since they extend \acp{mdp}.
+However, the computation of equilibrium strategies in stochastic games is an open problem.
+The main reason for this lack of result is that computing equilibrium strategies in a general stochastic game requires each agent to solve \aac{pomdp}.
+As previously exposed, this issue stems from the full rationality requirement imposed by classical game theory.
+With this consideration in mind, this research was steered towards bounded rationality.
+In stochastic games, bounded rationality commonly appears in the form of consistency.
+Agents using consistency are not required to have perfect understanding of their environment but only a statistically consistent understanding.
+
+In this dissertation, we laid down the foundations of a general consistency framework.
+In this framework, \acp{eee} have emerged as a solution concept.
+We proved the existence of \acp{eee} for a general setting.
+We provided a characterization of~\acp{eee} in perfect-monitoring repeated games.
+Finally, we explored the learning of \acp{eee} with a particular interest for the finite observation window case.
+Some other interesting open questions are listed below.
+
+\section{Implications of Using Consistency}
+The fact that agents use consistent models in~\acp{eee} diminishes the amount of computation they require to obtain optimal strategies.
+However, it also imposes constraints on the attainable equilibria and associated strategies.
+The first step to understand those constraints is to analyze the simplest notion of consistency, which is depth-\(k\) consistency.
+
+What impact does varying \(k\) have?
+Eyster and Piccione gave an answer in a specific setting where the strategies of the agents did not impact the environment~\cite{eyster_piccione:2011}.
+Since a depth-\(k\) consistent model is depth-\(k-1\) consistent as well, a larger \(k\) is synonymous with better understanding of the environment.
+They proved that agents with a larger~\(k\) did not always receive a larger payoff.
+This question has to be addressed for a more general setting.
+
+As~\(k\) increases, the agent gets a more accurate prediction of the strings of signals.
+This raises the question to know what happens in the limit.
+
+\section{Large Number of Agents}
+In a mean-field game, agents face identical problems and impact their opponents through the empirical distribution of states of all the agents.
+An~\ac{mfe} is an equilibrium in which these agents use depth-\(0\) consistency.
+These~\acp{mfe} are studied when the number of agents is large.
+Restricting the attention to this specific setting with a large number of agents allows for the derivation of strong results.
+The main result states that as the number of agents grows to infinity, an~\ac{mfe} converges to a Nash equilibrium.
+In other words, the approximation made by the agents regarding the empirical distribution of states does not change the behavior of the system.
+This result is a consequence of the central limit theorem and it would be interesting to generalize it to a broader setting.
+
+In the~\ac{mfe} setting, the agents are homogeneous and impact their opponents only through their state.
+The~\ac{eee} framework lifts these two restrictions.
+In particular the impact agents have on their opponents is embedded in the signal definition.
+Can results from the MFE literature be extended to the broader framework of~\acp{eee}?
+In particular, the~\acp{eee} framework offers the opportunity to explore the consequences of the central limit theorem for a broader class of consistency than the sole depth-\(0\).
+
+\section{Learning}
+\Acp{eee} were informally defined as fixed points of a simple iterative process.
+The existence of fixed points has been established.
+However, the convergence of the iterative process to such a fixed point is not guaranteed.
+Building a learning rule converging to~\acp{eee} can be done in two steps.
+First, a theoretical learning rule converging to \acp{eee} is designed.
+Then, a practical online version of the rule is derived.
+This approach was used in the simulations of~\cref{sec:learning_empirical_evidence_equilibria}.
+The theoretical learning rule uses the stationary distribution of the whole system.
+This information is not available to the agents as they play but it matches closely the requirements of~\acp{eee}.
+However, the agents can estimate the stationary distribution of the system by observing the play long enough.
+Hart and Mas-Colell used this two-step approach to prove the convergence of an adaptive no-regret learning rule to correlated equilibria~\cite{hart_mas-colell:2001}.
+The adaptive learning rule replaced a matrix inversion step by a simpler maximization one.
+
+\section{Price of Anarchy}
+Given a global objective, a multiagent system can be controlled by a centralized or a decentralized controller.
+In a centralized approach, an optimal controller for the objective is computed offline.
+Each agent is then given to execute a part of this controller.
+In a decentralized approach using game theory, each agent is given a utility function along with a learning rule.
+In this case, the controller corresponds to the equilibrium reached by the learning process.
+The decentralized approach is more robust and scalable than the centralized approach.
+However, these advantages come with a cost; the decentralized controller is suboptimal.
+For systems whose global objective coincide with maximizing the sum of the utility functions, this cost can be evaluated by a metric called the price of anarchy~\cite{koutsoupias_papadimitriou:1999}.
+The sum of the utility functions of the agents is called the social welfare, and the ratio of social welfare between the decentralized and centralized controllers is considered.
+The price of anarchy is the worst case ratio.
+In a learning context, the ratio is a random variable and properties other than its minimum value can be computed.
+This notion, classically defined for Nash equilibria, readily extends to~\acp{eee}.
+What is the price of anarchy for~\acp{eee}?
+
+\section{Payoff Folk Theorem}
+Payoff folk theorems for repeated games prove that all the feasible individually strictly rational payoff profiles are sustainable by subgame-perfect equilibria.
+This implies that subgame-perfect equilibria sustain almost all payoff profiles.
+Some of these payoff profiles are undesirable, for example the non-Pareto-optimal ones.
+Do~\acp{eee} sustain such a large set of payoff profiles?
+If so, can equilibrium selection  reduce the size of that set?

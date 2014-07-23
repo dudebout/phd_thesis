@@ -1,0 +1,29 @@
+\node [inner sep=0] (string) {\binarystring};
+
+\node [below = of string.west, anchor = west, inner sep=0, visible on=<2->] (probas) {\(\pb{0}, \pb{1}\)};
+
+\uncover<3->{
+\node [predictor, below = of probas.south west, anchor=north west] (mu) {\(\mu\)};
+\coordinate [below = of mu] (tail);
+\node [right = of mu] {\(\mu\elmt{s} = \probaof{s}\)};
+\draw [->] (mu) -- node [right] {\(s\)} (tail);
+}
+
+\uncover<4->{
+\node [predictor, right = 180pt of probas, alert on=<5-7>] (predictor) {\(\mu\)};
+\node [dynamic, below = of predictor, alert on=<5-7>] (f) {\(f\)};
+\node [alt=<7>{markov strategy}{strategy}, left = of f] (sigma) {\(\sigma\)};
+
+\node [inner sep=0pt, above = 62pt of sigma.north west, anchor=south west, alert on=<5->] (utility) {\(u \of{x, a, s\nxt}, \delta\)};
+
+\coordinate (s1) at (predictor.south);
+\coordinate [below = of s1] (s2);
+\draw [->, alert on=<5-7>] (s1) -- node [connection, visible on=<4-5>, normal on=<5>] (s3) {} node [right] {\(s\)} (s2);
+
+\coordinate (x1) at (f.160);
+\coordinate (a1) at (f.200);
+
+\draw [->] (x1) -- node [above] {\(x\)} (sigma.east|-x1);
+\draw [->] (sigma.east|-a1) -- node [below] {\(a\)} (a1);
+\draw<4-5> [->] (s3) -| (sigma.north);
+}

@@ -1,0 +1,17 @@
+\node [box, minimum height = 40pt] (f) {\(x\nxt \drawn f \of{x, a, s\nxt}\)};
+
+\coordinate (a2) at (f.165);
+\coordinate [left = 30pt of a2] (a1);
+\coordinate (s2) at (f.north);
+\coordinate [above = 30pt of s2] (s1);
+
+\coordinate (x4) at (f.195);
+\coordinate [left = 30pt of x4] (x6);
+\coordinate (x1) at (f.east);
+\coordinate [right = 15pt of x1] (x2);
+\coordinate [below = 15pt of f.south] (x3);
+
+\draw [->]  (a1) -- node [above] {\(a\)} (a2);
+\draw [->]  (s1) -- node [right] {\(s\)} (s2);
+\draw [<->] (x4) -- node [connection] (x5) {} (x6);
+\draw       (x1) -- (x2) |- (x3) -| (x5.center) node [above] {\(x\)};

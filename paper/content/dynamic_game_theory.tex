@@ -1,0 +1,782 @@
+\section{Markov Decision Processes}
+
+\subsection{Setup}
+
+The problems analyzed up to this point were static; there was no notion of time.
+We are now switching gears and turning to problems with dynamic.
+The simplest dynamic problems are \acp{mdp}.
+In an \ac{mdp}, a state evolves in discrete time controlled by an action.
+The state at time~\(t+1\) is a random variable depending only on the state of the system at time~\(t\) and the action played at time~\(t\).
+The dynamic is described as follows:
+\[
+\forall t \in \bN \comma x\Tp \drawn f \of {x\Tt, a\Tt},
+\]
+where~\(x\Tt\) and~\(x\Tp\) are states in a finite state space~\(\cX\), \(a\Tt\) is an action in a finite action set~\(\cA\), and~\(f\) is a state-transition function in~\(\cX \times \cA \to \distribover{\cX}\).
+This dynamic is alternatively represented by the short notation
+\begin{equation}
+\label{eq:mdp_dynamic}
+x\nxt \drawn f \of {x, a},
+\end{equation}
+where~\(x\) and~\(a\) are the state at the action at a given time step and~\(x\nxt\) is the state at the next time step.
+
+At each time step~\(t\), the agent observes the state and chooses an action.
+Over time, the agent accumulates some information.
+This sequence of states and actions is called the history.
+The history up to time~\(t\) is~\(h\Tt = \tuple{x\tm{0}, a\tm{0}, x\tm{1}, a\tm{1}, \dots,  x\tm{t-1}, a\tm{t-1}, x\tm{t}}\).
+Denote by~\(\cH\Tt\) the set of histories up to time~\(t\) and by~\(\cH = \union\idxin{t}{\bN} \cH\Tt\) the set of all possible histories.
+The information observable over an infinite run is called an infinite history.
+The set of infinite histories is denoted by~\(\cH\Tinf\).
+
+In state~\(x\), choosing action~\(a\) yields a payoff~\(v \of {x, a}\).
+The agent is interested in maximizing its expected sum of discounted payoffs for a given discount factor~\(\delta \in \interval[co]{0}{1}\).
+For a given infinite history~\(h = \tuple{x\tm{0}, a\tm{0}, x\tm{1}, a\tm{1}, \dots}\), the agent receives a sum of discounted payoffs~
+\begin{equation}
+\label{eq:mdp_utility}
+V \of{h} = \sum \idxfromto{t}{0}{\infty} \delta \pow {t} v \of {x\Tt, a\Tt}.
+\end{equation}
+Note that~\(\delta \pow {t}\) denotes~\(\delta\) to the power~\(t\) whereas~\(x\Tt\) and~\(a\Tt\) denote the state and the action at time~\(t\).
+
+\begin{note}[Different Flavors of \acp{mdp}]
+\Acp{mdp} are amongst the most studied dynamical systems since Bellman's seminal work on dynamic programming~\cite{bellman:1957}.
+Multiple books are devoted to their analysis~\cite{puterman:1994,bertsekas:1995}.
+As a result, \acp{mdp} come in a variety of flavors.
+These different flavors are described below with an emphasis on the one used in this research:
+\begin{description}
+\item[Discrete Time]
+In this research, the agent chooses an action at discrete-time steps.
+There also exist continuous-time Markov decision processes.
+This shift to uncountable spaces requires the use of more advanced measure theoretic tools to define probabilities.
+\item[Finite State Space and Action Set]
+In this research, the state space and the action set of the agent are finite.
+This restriction guarantees that small enough problems can be simulated and solved on a computer.
+Some~\ac{mdp} results carry over from finite sets to countable sets.
+Some other problems use uncountable sets, such as the continuous real line.
+As mentioned previously, analyzing these problems require more advanced measure theoretic tools.
+\item[Single Action Set for All States]
+In this research, at each time step and in each state, the agent is allowed to use any of the actions in its action set.
+In some problems, the action set is indexed by the state.
+In state~\(x\), the agent can choose an action in the set~\(\cA\strat{x}\).
+The analysis with a single action set is not more restrictive but requires less notation.
+\item[Unconstrained Optimization]
+In this research, the optimization performed by the agent is unconstrained.
+The addition of constraints requires the use of additional tools, such as Lagrange multipliers, to analyze the problems.
+\item[Infinite Horizon]
+In this research, the cost is aggregated over an infinite time horizon.
+Other classes of~\acp{mdp} predetermine a final time~\(T\) at which the process stops.
+With a finite horizon, optimal strategies are computed by using backwards induction.
+In the infinite horizon setup, backwards induction is not applicable.
+However, a fixed-point property, described in the next section, replaces backwards induction.
+The game-theoretic literature strongly favors the use of infinite horizon.
+\item[Absence of Termination State]
+In this research, the process goes on forever.
+A variation considers processes with a special state.
+If the process reaches this state, the payoffs are tallied and everything stops.
+This is, once again, a notational issue and the setup used in this research supersedes this variation.
+\item[Discounted Payoff]
+In this research, the infinite stream of payoffs is aggregated through the use of a discounted sum.
+The objective in some~\acp{mdp} is the average payoff.
+For finite-horizon problems this does not change anything.
+However, in the infinite horizon case, a non discounted sum might not converge and more technicalities have to be dealt with.
+Discounted payoffs are predominant in the game-theoretic literature.
+\end{description}
+
+From now on, these characteristics are implied.
+Therefore, they will not be made explicit for each~\ac{mdp} encountered.
+\end{note}
+
+\subsection{Strategies}
+
+In a static decision-making problem, as described in~\cref{sec:static_decision_making}, the agent seeks to maximize its one-time payoff.
+This payoff is the utility associated with its action.
+Therefore, the agent faces an optimization problem of the form
+\[
+\argmax\idxin{a}{\cA} u \of{a}.
+\]
+In an~\ac{mdp}, the equivalent of this static utility function is the function~\(V \from \cH\Tinf \to \bR\) defined by~\cref{eq:mdp_utility}.
+To determine the payoff of the agent, the entire infinite history~\(h \in \cH\Tinf\) is required.
+Therefore, the agent faces an optimization problem of the form
+\[
+\argmax\idxin{h}{\cH} V \of{h}.
+\]
+However, the agent cannot influence the history at will.
+The dynamic~\cref{eq:mdp_dynamic} imposes some constraints on the possible histories.
+Instead of choosing directly a history, the agent chooses a strategy, which is a plan of action for all the possible outcomes of the process.
+A strategy~\(\sigma\) determines at time~\(t\) an action~\(a\Tt\) depending on~\(h\Tt\), the information available to the agent at time~\(t\).
+As was the case in the previous chapter, this action can also be mixed instead of pure.
+Therefore, a strategy is an element~\(\sigma \from \cH \to \distribover{\cA}\).
+An agent using strategy~\(\sigma\) with initial state~\(x\) receives an expected sum of discounted payoffs
+\begin{equation}
+\label{eq:mdp_optimal_strategy}
+U\strat{\sigma} \of {x}
+=
+\expectcond[\sigma] {V \of {h}}{x\Tz = x}
+=
+\expectcond[\sigma] {\sum \idxfromto{t}{0}{\infty} \delta \pow {t} v \of {x\Tt, a\Tt}} {x\Tz = x}.
+\end{equation}
+Therefore, for a given initial state~\(x\), the agent faces an optimization problem of the form
+\[
+\argmax\idxin{\sigma}{\Sigma} U\strat{\sigma} \of{x}.
+\]
+
+\subsection{Agent Knowledge}
+
+\Cref{sec:different_story} illustrates that equilibria are not intrinsic to a given static game.
+Depending on the story used, different solution concepts arise.
+For dynamic problems, some side information is similarly required.
+It is crucial to know the information available to the agent at every time step.
+
+In~\aac{mdp}, the information available to an agent is two fold.
+First, the agent knows some information a priori and keeps this knowledge all along.
+It knows the dynamic of the world~\(f\) and the causality relations in place.
+The main causality relation is the impact of its action on the state evolution.
+Second, it accumulates some information along the way.
+At each time step, the agent observes the action played and the resulting state.
+At time~\(t\), it has accumulated the history~\(h\Tt\).
+The information available to the agent is represented in~\cref{fig:agent_knowledge_mdp}.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_mdp}
+\ccaption[Agent information in \aac{mdp}.]{
+The dotted arrows materialize causality.
+A value at the start of an arrow impacts the value at the end of this arrow.
+The agent knows all of these causality relations, the transition function~\(f\), and at time step~\(t\) it has observed~\(h\Tt\).
+The purpose of the gray highlights is solely to improve readability.
+They do not emphasize specific values.
+}
+\label{fig:agent_knowledge_mdp}
+\end{figure}
+
+The type of diagram introduced in~\cref{fig:agent_knowledge_mdp} is central in this research.
+Indeed, the solution concept introduced relies on tweaking the information available to the agents, and these diagrams help visualizing the process.
+
+\subsection{Bellman's Principle of Optimality}
+
+Recall that, for a given initial state~\(x\), the agent faces an optimization problem of the form
+\[
+\argmax\idxin{\sigma}{\Sigma} U\strat{\sigma} \of{x}.
+\]
+It is actually possible to look for a single strategy that is simultaneously optimal for every initial state.
+As such, a solution to the \ac{mdp} is an element of~\(\inter \idxin {x} {\cX} \argmax \idxin {\sigma} {\Sigma} U \strat{\sigma} \of {x}\).
+It is not obvious that the maximum is attainable nor that the intersection is not empty.
+Furthermore, recall that a strategy is a function from~\(\cH\) to~\(\distribover{\cA}\).
+The domain of a strategy~\(\cH\) is infinite; therefore, the set of strategies~\(\Sigma\) is infinite.
+As a result, looking for a solution with an exhaustive-search method is in vain.
+
+Bellman was the first to observe that the Markovian structure of the problem gives structure to optimal strategies.
+He described this structure in his principle of optimality~\cite{bellman:1957}:
+\begin{quote}
+An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.
+\end{quote}
+This simple principle has far-reaching consequences.
+The most important one guarantees that for any unconstrained discounted finite \ac{mdp}, there exists a stationary deterministic optimal strategy~\cite[Theorem~6.2.10]{puterman:1994}.
+A strategy is stationary if the next action is computed using only the current state; the history leading to the current state and the time are not used.
+A strategy is deterministic if the actions selected are not mixed.
+
+This result reduces the set of strategies to be considered to a finite number.
+However, solving~\cref{eq:mdp_optimal_strategy} for each of the~\(\abs{\cA} \pow {\abs{\cX}}\) stationary deterministic strategies and finding the maximum is prohibitively expensive.
+Once again, the Markovian structure of the problem helps.
+There are more efficient ways to explore the solution space.
+As the existence of a stationary policy indicates, the only information that really matters in \aac{mdp} is the current state.
+The fact that there is no need to consider the entire history is captured in~\cref{fig:agent_knowledge_mdp_state}, which simplifies the agent's knowledge diagram.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_mdp_state}
+\ccaption[Minimal agent information in~\aac{mdp}.]{
+Bellman's principle of optimality guarantees it is enough to know the current state to act optimally.
+Tracking the entire history of state-action pairs cannot yield a higher expected sum of discounted payoffs.
+}
+\label{fig:agent_knowledge_mdp_state}
+\end{figure}
+
+Bellman also gave a characterization of stationary deterministic optimal strategies.
+This characterization relies on two concepts.
+First, for \aac{mdp}, there exists a function~\(U\opt \from \cX \to \bR\) called the value function of the problem.
+When using an optimal strategy from the initial state~\(x\), the agent receives a payoff~\(U\opt \of {x}\).
+Second, we define the Bellman operator
+\begin{equation*}
+\begin{aligned}
+\sB \from \grpparen{\cX \to \bR} &\to \grpparen{\cX \to \bR} \\
+U &\mapsto \grpbrace{x \mapsto \max\idxin{a}{\cA} \grpbrace{u \of{x, a} + \delta \expectcond[f]{U \of{x\nxt}}{x, a}}},
+\end{aligned}
+\end{equation*}
+which takes a function that looks like a value function and returns another such function.
+Intuitively speaking, given an estimate of the value function~\(U\), a better estimate is~\(\sB U\).
+Thanks to the discount factor~\(\delta\) being smaller than~\(1\), the Bellman operator~\(\sB\) is a contraction mapping.
+It therefore has a unique fixed point.
+This unique fixed point is the value function~\(U\opt\).
+This result is known as the Bellman equation
+\begin{equation*}
+U\opt = \sB U\opt.
+\end{equation*}
+Given the value function~\(U\opt\), a stationary deterministic strategy~\(\sigma\opt\) satisfies, for all~\(x\) in~\(\cX\),
+\begin{equation*}
+\sigma\opt \of{x} \in \argmax\idxin{a}{\cA} \grpbrace{ u\of{x,a} + \delta \expectcond[f]{U\opt \of{x\nxt}}{x,a}}.
+\end{equation*}
+This characterization is known as the one-shot deviation principle in the repeated games literature.
+As this name suggests, it is sufficient to verify that the one-shot action taken at each state is optimal to guarantee global optimality of the strategy.
+
+\subsection{Dynamic Programming}
+
+The astute reader noticed that the Bellman operator was not used in the characterization of optimal strategies.
+However, it is central in the actual computation of such strategies through dynamic programming.
+Indeed, dynamic-programming algorithms search the solution space by using the recursive structure of the Bellman equation.
+These algorithms are more efficient than exhaustive-search algorithms but are under the curse of dimensionality.
+The amount of computations required grows polynomially with the sizes of the state space and action set.
+However, the size of~\acp{mdp} solvable in practice is limited.
+The two main dynamic-programming algorithms, value iteration and policy iteration, are presented below.
+
+\subsubsection{Value Iteration}
+
+The value iteration algorithm uses the fact that the Bellman operator~\(\sB\) is a contraction mapping.
+On top of guaranteeing the existence of a fixed point, the contraction mapping property also guarantees that the fixed point is found by repeated application of the Bellman operator.
+For any initial value~\(U\Tz \from \cX \to \bR\),
+\[
+\limfty{t} \sB\pow{t} U\tm{0} = U\opt.
+\]
+An actual algorithm yielding an~\(\epsilon\)~optimal strategy is exposed in~\cref{alg:value_iteration}.
+The stopping condition guarantees that the returned strategy is \(\epsilon\)~optimal.
+See~\cite[Theorem~6.3.1]{puterman:1994} for a detailed proof.
+
+\begin{algorithm}[pht]
+  \caption{Value Iteration}
+  \label{alg:value_iteration}
+  \begin{algorithmic}
+    \Procedure{Value Iteration}{$U\Tz, \epsilon$}
+      \State \(t \gets 0\)
+      \Repeat
+        \ForAll{\(x \in \cX\)}
+          \State \(U\Tp \of {x} \gets \sB U\Tt \of {x}\)
+        \EndFor
+        \State \(t \gets t+1\)
+      \Until{\(\norm[\infty]{U\Tt - U\Tm} \le \frac{\epsilon \onem{\delta}}{2 \delta}\)}
+      \ForAll{\(x \in \cX\)}
+        \State \(\sigma \of {x} \gets \argmax\idxin{a}{\cA} \grpbrace{ u\of{x,a} + \delta \expectcond[f]{U\Tt \of{x\nxt}}{x,a}}\)
+      \EndFor
+      \State \Return \(\sigma\)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+As the name suggests, the algorithm computes successive approximation of the value function.
+The actual strategy is only computed at then end, once the approximation of the value function is satisfactory.
+
+\subsubsection{Policy Iteration}
+
+The policy iteration algorithm takes a different approach by computing successive strategies, also called policies.
+For a given strategy~\(\sigma\), the algorithm computes the expected payoff from each state, encoded in the function~\(U\strat{\sigma} \from \cX \to \bR\).
+The next strategy is computed by taking~\(U\strat{\sigma}\) as the approximation of the value function.
+
+To compute~\(U\strat{\sigma}\), the following operator is used:
+\[
+\begin{aligned}
+\sB\strat{\sigma} \from \grpparen{\cX \to \bR} &\to \grpparen{\cX \to \bR} \\
+U &\mapsto \grpbrace{x \mapsto \expectcond[f, \sigma]{u \of{x, a} + \delta U \of{x\nxt}}{x}}.
+\end{aligned}
+\]
+This operator is related to the Bellman operator.
+For the same reasons, it is a contraction mapping, and~\(U\strat{\sigma}\) is computed by solving the equation
+\begin{equation}
+\label{eq:bellman_equation_strategy}
+U\strat{\sigma} = \sB\strat{\sigma} U\strat{\sigma}.
+\end{equation}
+Solving Bellman's equation is difficult because of the maximization in the Bellman operator.
+The lack of maximization makes solving~\cref{eq:bellman_equation_strategy} equivalent to a matrix inversion.
+The resulting algorithm is presented in~\cref{alg:policy_iteration}.
+
+\begin{algorithm}[pht]
+  \caption{Policy Iteration}
+  \label{alg:policy_iteration}
+  \begin{algorithmic}
+    \Procedure{Policy Iteration}{$\sigma\Tz$}
+      \State \(t \gets 0\)
+      \Repeat
+        \State{\(U\strat{\sigma\Tt} \gets \text{ the solution of the equation } U\strat{\sigma\Tt} = \sB\strat{\sigma\Tt} U\strat{\sigma\Tt}\)}
+        \ForAll{\(x \in \cX\)}
+          \State \(\sigma\Tp \of {x} \gets \argmax\idxin{a}{\cA} \grpbrace{ u\of{x,a} + \delta \expectcond[f]{U\strat{\sigma\Tt} \of{x\nxt}}{x,a}}\)
+        \EndFor
+        \State \(t \gets t+1\)
+      \Until{\(\sigma\Tt = \sigma\Tm\)}
+      \State \Return \(\sigma\Tt\)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Online Learning}
+When the dynamic~\cref{eq:mdp_dynamic} of the system is not known but can be easily simulated, reinforcement-learning algorithms can be used~\cite{bertsekas_tsitsiklis:1996, sutton_barto:1998}.
+A reinforcement-learning algorithm learns the value function while using its current optimal strategy.
+As the algorithm accumulates information, it computes better strategies.
+Reinforcement-learning algorithms work by balancing exploration and exploitation.
+Exploration refers to using new strategies in order to get a better estimate of the value function.
+Exploitation refers to using a strategy maximizing the current estimate of the value function.
+Dynamic programming is an offline approach, whereas reinforcement learning is an online approach.
+
+Most dynamic-programming algorithms compute the value function~\(U\opt\).
+Some reinforcement-learning algorithms compute instead the action value function~\(Q \from \cX \times \cA \to \bR\) defined by
+\begin{equation*}
+Q \of {x, a} = u \of {x, a} + \delta \expectcond[f]{U\opt \of{x\nxt}} {x, a}.
+\end{equation*}
+For example, SARSA and \(Q\)-learning are reinforcement-learning versions of policy iteration and value iteration respectively.
+
+
+\section{Partially Observable Markov Decision Processes}
+\label{sec:pomdps}
+
+\Acp{pomdp} model situations where the agent is uncertain about the state of the dynamical system.
+In \aac{pomdp}, the state evolves according to~\cref{eq:mdp_dynamic}.
+However, at each time step, the agent cannot observe the state and can only observe a signal~\(y\) drawn according to
+\begin{equation*}
+y \drawn g \of {x},
+\end{equation*}
+where~\(y\) is a signal in finite state space~\(\cY\) and~\(g \from \cX \to \distribover{\cY}\) is an observation function.
+In this setup, the information available to the agent is called private history and is denoted by~\(p\).
+At time~\(t\), the agent has observed~\(p\Tt = \tuple{y\tm{0}, a\tm{0}, y\tm{1}, a\tm{1}, \dots,  y\tm{t-1}, a\tm{t-1}, y\tm{t}}\).
+The information available to the agent is pictured in~\cref{fig:agent_knowledge_pomdp}.
+This small change in the information available to the agent has big consequences: \acp{pomdp} are intractable.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_pomdp}
+\ccaption[Agent information in \aac{pomdp}.]{
+The agent knows all of the causality relations, the transition function~\(f\), the observation function~\(g\) and at time step~\(t\) it has observed private history~\(p\Tt\).
+In particular, the state is never observed and therefore is not part of the private history.
+}
+\label{fig:agent_knowledge_pomdp}
+\end{figure}
+
+In an \ac{mdp}, the state is the only necessary information needed to compute the next action of an optimal strategy.
+In a \ac{pomdp}, the agent does not know the state and needs to use beliefs to implement an optimal strategy.
+Beliefs are probability distributions over states computed using the signals observed and Bayes' inference.
+An optimal solution for a \ac{pomdp} is a function from the belief space~\(\Union\idxfromto{t}{0}{\infty}\distribover{\cX\pow{t}}\) to the action set.
+The fact that the belief space is continuous is what makes the problem intractable.
+This difficulty is partly visible in the minimal agent knowledge diagram of~\cref{fig:agent_knowledge_pomdp_state}.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_pomdp_state}
+\ccaption[Minimal agent information in \aac{pomdp}.]{
+Bellman's principle of optimality guarantees it is enough to know the distribution~\(\beta\) over the states to act optimally.
+However, the belief space~\(\cB = \distribover{\cX}\) is uncountable, hence, the problem is intractable.
+Bayesian inference is denoted by~\(b\).
+}
+\label{fig:agent_knowledge_pomdp_state}
+\end{figure}
+
+\section{Repeated Games}
+
+\Acp{mdp} are the simplest dynamic decision-making problems.
+Similarly, repeated games are the simplest dynamic games.
+In a repeated game, agents play a one-shot game at discrete time steps and accumulate their payoffs with a discount factor.
+This section introduces repeated games with an emphasis on their similarities with \acp{mdp}.
+
+Consider a set of agents~\(\cI\) and a one-shot game described by utility functions~\(u = \agstuple{u}\) where~\(u\Ii \from \cA \to \bR \).
+At each time step~\(t\), agent~\(i\) chooses an action~\(a\Ii \in \cA\Ii\).
+Over time, the agents accumulate some information.
+In the simplest class of repeated games, called perfect-monitoring repeated games, each agent observes the joint action played at each time step.
+The sequence of joint actions is called the public history, or simply history when there is no risk of confusion.
+The history up to time~\(t\) is~\(h\Tt = \tuple{\sseqcom{a}{\tm}{0}{1}{t-1}}\).
+Denote by~\(\cH\Tt\) the set of histories up to time~\(t\) and by~\(\cH = \union\idxin{t}{\bN} \cH\Tt\) the set of all possible histories.
+The information observable over an infinite run is called an infinite history.
+The set of infinite histories is denoted by~\(\cH\Tinf\).
+
+The joint action~\(a\) yields a payoff~\(u\Ii \of {a}\) for agent~\(i\).
+Agent~\(i\) is interested in maximizing its expected sum of discounted payoffs for a given discount factor~\(\delta\Ii \in \interval[co]{0}{1}\).
+For a given infinite history~\(h = \tuple{a\Tz, a\tm{1}, \dots}\), the agent receives a sum of discounted payoffs~
+\[
+U\Ii \of{h} = \sum \idxfromto{t}{0}{\infty} \delta\Ii \pow {t} u\Ii \of {a\Tt}.
+\]
+The same way a one-shot game is described by a tuple of utility functions~\(u\), a perfect-monitoring repeated game is described by a pair~\(\tuple{u, \delta}\), where \(\delta = \agstuple{\delta}\).
+
+Agent~\(i\)'s choice of action~\(a\Ii\) at time~\(t\) only depends on the observed sequence of joint actions~\(h\Tt\) up to time~\(t\).
+Therefore a strategy for agent~\(i\) is an element~\(\sigma\Ii\) such that~\(\sigma\Ii \from \cH \to \distribover{\cA\Ii}\).
+The set of strategies for agent~\(i\) are denoted by~\(\Sigma\Ii\) and the joint strategy set by~\(\Sigma  = \agsset{\Sigma}\).
+Given a joint strategy~\(\sigma = \agstuple{\sigma}\), agent~\(i\) receives an expected discounted payoff
+\[
+U\Ii \of{\sigma} = \expectof[\sigma]{ \sum\idxfromto{t}{0}{\infty} \delta\Ii\pow{t} u\Ii \of{a\Tt}}\!.
+\]
+For the sake of rigor, when introducing~\acp{mdp}, two symbols were used for the payoffs associated with a history, \(V \of{h}\), and with a strategy, \(U \of{\sigma}\).
+When unambiguous, \(U\Ii\) represents either payoff.
+
+Repeated games include a time component which is not present in one-shot games.
+However, a repeated game can be viewed as a one shot game with action set~\(\Sigma\) and utilities~\(U = \agstuple{U}\).
+Therefore the notions of best response and Nash equilibria in one-shot games directly translate to repeated games.
+For an agent~\(i\) and fixed strategies of its opponents~\(\sigma\mI\), agent~\(i\) faces \aac{mdp} with state~\(h\).
+Its best response strategy is therefore characterized by Bellman's equation.
+A Nash equilibrium for a repeated game is therefore a tuple of strategies each satisfying a Bellman equation induced by the other ones.
+Note that the state space~\(\cH\) is in this case is countable and not finite.
+
+The knowledge of a pair of agents in a repeated game with perfect-monitoring is presented in \cref{fig:agent_knowledge_perfect-monitoring_repeated_game}.
+Notice the strong resemblance with \cref{fig:agent_knowledge_mdp} when looking from agent~\(1\)'s perspective or from agent~\(2\)'s perspective.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_perfect-monitoring_repeated_game}
+\ccaption[Agent knowledge in a two-player perfect-monitoring repeated game.]{
+The public history is the sequence of joint actions.
+It is shared as it is observed by both agents.
+}
+\label{fig:agent_knowledge_perfect-monitoring_repeated_game}
+\end{figure}
+
+This section emphasized the similarities between repeated games and \acp{mdp}.
+However, there is one major difference in the treatment of repeated games.
+This difference is the subject of the following subsection.
+
+\subsection{Sequential Rationality}
+
+In a two-player repeated game, a Nash equilibrium is a pair of strategies~\(\tuple{\sigma\one, \sigma\two}\).
+Agent~\(1\)'s strategy~\(\sigma\one\) is an optimal strategy for the~\ac{mdp} induced by~\(\sigma\two\).
+However, the conditions for a Nash equilibrium do not address the case where agent~\(2\) does not follow~\(\sigma\two\).
+The following example illustrates this difficulty introduced by the notion of time.
+
+\begin{example}[Non-credible Threat]
+\label{ex:non-credible_threat}
+Consider the following diagram:
+\begin{equation}
+\label{eq:centipede_game}
+\inputtikz[baseline=(current  bounding  box.center)]{centipede_game}
+.
+\end{equation}
+It describes a game in its so-called extensive form.
+Play starts with the state being the root of the tree.
+When the state is a non-terminal node, the number in the circle determines which agent is to take an action.
+The branches of this node correspond to the actions available to this agent.
+The action taken determines the next state.
+When the state is a leaf, the game is over.
+The numbers in this leaf correspond to the payoffs for both agents.
+Therefore, the game described by~\cref{eq:centipede_game} has the following interpretation:
+\begin{itemize}
+  \item Agent~\(1\) chooses between actions~\(\rL\) and~\(\rR\).
+  \begin{itemize}
+    \item If~\(\rL\) is chosen, the game is over; agent~\(1\) receives a payoff of~\(1\) and agent~\(2\) a payoff of~\(0\).
+    \item
+    If~\(\rR\) is chosen, it is now agent~\(2\)'s turn to choose between actions~\(\rlL\) and~\(\rlR\).
+    Irrespective of which action is chosen, the game ends after it.
+      \begin{itemize}
+        \item If~\(\rlL\) is chosen, both agents receive a payoff of~\(2\).
+        \item If~\(\rlR\) is chosen, agent~\(1\) receives a payoff of~\(0\) and agent~\(2\) a payoff of~\(1\).
+
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+\end{example}
+
+\begin{note}[Extensive-form Games]
+\label{note:extensive-form_games}
+Extensive-form games can always be redefined in a one-shot form.
+For example, the extensive-form game~\cref{eq:centipede_game} admits the following one-shot definition:
+\begin{equation*}
+\punctuategame{
+\begin{game}{2}{2}
+        \> \(\rlL\) \> \(\rlR\) \\
+\(\rL\) \> \(1, 0\) \> \(1, 0\) \\
+\(\rR\) \> \(2, 2\) \> \(0, 1\)
+\end{game}}
+{.}\bigskip
+\end{equation*}
+Note that agent~\(2\)'s action does not impact the payoffs when agent~\(1\) plays~\(\rL\).
+Therefore, the agents' incentives are preserved and rational agents exhibit identical behaviors in the one-shot game or the extensive-form game.
+Since the incentives are preserved, Nash equilibria are also preserved.
+\end{note}
+
+\begin{example}[{Non-credible Threat [continued]}]
+Extensive-form games are not repeated games.
+However, they introduce a notion of time that is sufficient to illustrate the problem at hand.
+
+\Cref{note:extensive-form_games} shows us that this game has two pure Nash equilibria: \(\tuple{R,l}\) and~\(\tuple{L,r}\).
+Let's focus on~\(\tuple{L,r}\).
+Under the joint action~\(\tuple{L,r}\), agent~\(1\) plays and the game ends immediately.
+Therefore, agent~\(2\)'s action does not affect the payoffs and agent~\(2\) has no incentive to unilaterally deviate.
+If agent~\(1\) switches its action to~\(R\) its payoff goes from~\(1\) to~\(0\) so it has no incentive to unilaterally deviate either.
+However, this switch to~\(R\) brings an interesting situation to the table.
+If the deviation occurs, it becomes agent~\(2\)'s turn to play.
+Agent~\(2\) has committed to playing~\(r\).
+However, if the game ever reaches that stage, a rational agent would always play~\(l\).
+The problem is that agent~\(2\) makes a non-credible threat.
+Agent~\(2\) is threatening agent~\(1\) with a low payoff.
+However, enforcing that threat requires agent~\(2\) to act irrationally by taking a smaller payoff,~\(1\) instead of~\(2\).
+This equilibrium is said to lack sequential rationality.
+
+In the normal-form representation the problem is not as apparent since both agents play at the same time.
+However, since anything is a best response to~\(L\), agent~\(2\) could move to~\(l\) which would prompt agent~\(1\) to move to~\(R\) leading to the other Nash equilibrium and both agents' payoff increases.
+Therefore, even in the normal-form representation, the weakness of~\(\tuple{L,r}\) is observable.
+
+When time is involved, strategies have the potential to exclude some states.
+In this example, agent~\(2\) never gets to play.
+A Nash equilibrium does not impose anything on these states.
+A sequentially-rational equilibrium, however, imposes no profitable unilateral deviation even on these unreachable states.
+This condition is equivalent to forbidding non-credible threats.
+
+Backwards induction is used to verify if a Nash equilibrium of an extensive-form game is sequentially rational.
+In this example, start at agent~\(2\)'s turn.
+The only rational action is~\(l\).
+Propagate this information backwards and analyze agent~\(1\)'s turn.
+At this point, agent~\(1\) has to play~\(R\).
+This proves the only sequentially-rational equilibrium of this game is~\(\tuple{R, l}\).
+\end{example}
+
+In a repeated game, agents do not alternate playing turns.
+However, the action of an agent eliminates some possible histories, creating some unreachable states.
+The Nash equilibrium condition in repeated games only verifies Bellman's equation on the reachable states.
+Sequential rationality in repeated games verifies Bellman's equation on all the possible states.
+In an~\ac{mdp}, unreachable states are simply ignored as the model guarantees that these states will never be seen.
+
+Let's now give the formal definition of sequential rationality for perfect-monitoring repeated games.
+In this context, a sequentially-rational equilibrium is called a subgame-perfect equilibrium.
+
+\begin{definition}[Subgame-perfect Equilibrium]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game and~\(\delta = \agstuple{\delta}\) be discount factors.
+Let~\(\sigma\Ii \in \Sigma\Ii\) be a strategy for agent~\(i\).
+
+The joint strategy~\(\sigma = \agstuple{\sigma}\) is a subgame-perfect equilibrium if for every agent~\(i \in \cI\) and every history~\(h \in \cH\), the strategy~\(\sigma\Ii\) is optimal with respect to the~\ac{mdp} induced by~\(\sigma\mI\) with initial state~\(h\).
+\end{definition}
+
+The game-theoretic literature often mentions the one-shot deviation principle as a key result in verifying subgame perfection.
+It only restates that Bellman's equation has to be verified at every state~\(h\), including unreachable ones.
+
+\subsection{Folk Theorem}
+
+Sequentially-rational equilibria are the logical extension of Nash equilibria for repeated games.
+As mentioned previously, in the static-game setting, economists are interested in characterizing the set of achievable payoffs at equilibrium.
+A similar characterization is studied for repeated games.
+The results are more difficult to obtain but a folk theorem has guided this line of research.
+The name folk theorem comes from the community believing it to be true before a proof existed.
+To state the folk theorem, the concepts of feasibility and individual rationality of payoffs are described below.
+
+\begin{definition}[Feasible Payoff]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+A joint payoff~\(p \in \bR \pow{\CI}\) is feasible for~\(u\) if there exist convex coefficients \(\seqin{\theta}{\ag}{a}{\cA}\) indexed by the joint actions, such that \(p = \sum\idxin{a}{\cA} \theta\ag{a} u \of{a}\).
+The tuple~\(\seqin{\theta}{\ag}{a}{\cA}\) forms convex coefficients if~\(\theta\ag{a} \in \interval{0}{1}\) for all~\(a \in \cA\) and \(\sum\idxin{a}{\cA} \theta\ag{a} = 1\).
+Simply put, a payoff is feasible if it is a convex combination of pure payoffs.
+\end{definition}
+
+\begin{definition}[Minmax Value]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game and~\(i \in \cI\) be an agent.
+Suppose the opponents of agent~\(i\) have fixed their, potentially mixed, actions.
+Agent~\(i\) can guarantee for itself a payoff, called its minmax value, defined as
+\[
+\mathrm{minmax}\Ii = \min\idxin{\alpha\mI}{\opsdistset{\cA}} \max\idxin{a\Ii}{\cA\Ii} u\Ii \of {a\Ii, a\mI}.
+\]
+\end{definition}
+
+\begin{definition}[Individually-rational Payoff]
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+A joint payoff~\(p \in \bR \pow{\CI}\) is individually rational for~\(u\) if for all agents~\(i \in \cI\), \(p\Ii\) is greater or equal than the minmax value of agent~\(i\).
+A joint payoff~\(p \in \bR \pow{\CI}\) is strictly individually rational for~\(u\) if for all agents~\(i \in \cI\), \(p\Ii\) is strictly greater than the minmax value of agent~\(i\).
+\end{definition}
+
+The folk theorem states that every feasible individually-rational payoff of the one-shot game is achievable as the expected sum of discounted payoffs of a sequentially-rational equilibrium for a discount factor close enough to one.
+
+The following example illustrates the concepts of feasible and individually-rational payoffs.
+
+\begin{example}[Feasible Individually-rational Payoffs in the Battle of the Sexes]
+Recall the battle of the sexes game described by the following normal form:
+\[
+\punctuategame{
+\begin{game}{2}{2}[\male][\female]
+        \> \(\rF\)  \> \(\rO\)  \\
+\(\rF\) \> \(2, 2\) \> \(0, 1\) \\
+\(\rO\) \> \(0, 0\) \> \(1, 3\)
+\end{game}}
+{.}\bigskip
+\]
+
+The minmax value for the man is
+\[
+\begin{aligned}
+\mathrm{minmax}\ag{\male}
+& =
+\min\idxin{\alpha\ag{\female}}{\distribover{\set{\rF, \rO}}} \max\idxin{a\ag{\male}}{\set{\rF, \rO}} u\ag{\male} \of {a\ag{\male}, a\ag{\female}} \\
+& =
+\min\idxin{p\ag{\female}}{\interval{0}{1}} \max\idxin{a\ag{\male}}{\set{\rF, \rO}} \grpbrace{u\ag{\male} \of {a\ag{\male}, \rF}p\ag{\female} + u\ag{\male} \of{a\ag{\male}, \rO}\onem{p\ag{\female}}} \\
+& =
+\min\idxin{p\ag{\female}}{\interval{0}{1}} \max \grpbrace{2p\ag{\female}+ 0\onem{p\ag{\female}}, 0p\ag{\female} + 1\onem{p\ag{\female}}} \\
+& =
+\min\idxin{p\ag{\female}}{\interval{0}{1}} \max \grpbrace{2p\ag{\female}, 1 - p\ag{\female}} \\
+&=
+\frac{2}{3}.
+\end{aligned}
+\]
+The minmax value for the woman is
+\[
+\begin{aligned}
+\mathrm{minmax}\ag{\female}
+& =
+\min\idxin{\alpha\ag{\male}}{\distribover{\set{\rF, \rO}}} \max\idxin{a\ag{\female}}{\set{\rF, \rO}} u\ag{\female} \of {a\ag{\female}, a\ag{\male}} \\
+& =
+\min\idxin{p\ag{\male}}{\interval{0}{1}} \max\idxin{a\ag{\female}}{\set{\rF, \rO}} \grpbrace{u\ag{\female} \of {a\ag{\female}, \rF}p\ag{\male} + u\ag{\female} \of{a\ag{\female}, \rO}\onem{p\ag{\male}}} \\
+& =
+\min\idxin{p\ag{\male}}{\interval{0}{1}} \max \grpbrace{2p\ag{\male}+ 0\onem{p\ag{\male}}, 1p\ag{\male} + 3\onem{p\ag{\male}}} \\
+& =
+\min\idxin{p\ag{\male}}{\interval{0}{1}} \max \grpbrace{2p\ag{\male}, 3 - 2p\ag{\male}} \\
+&=
+\frac{3}{2}.
+\end{aligned}
+\]
+
+The feasible payoffs are contained in the convex hull of the pure payoffs.
+The individually-rational payoffs are those above both minmax values.
+The feasible and individually-rational payoffs for the battle of the sexes are illustrated in~\cref{fig:bos_feasible_enforceable_payoffs}.
+
+\begin{figure}[th]
+\centering
+\inputtikz{bos_feasible_enforceable_payoffs}
+\ccaption[Feasible enforceable payoffs in the battle of the sexes.]{
+The dotted circles corresponds to the payoffs of the four pairs of pure actions.
+The union of the light gray and the dark gray areas represents the feasible payoffs.
+The dashed lines represent the minmax values.
+The dark gray area corresponds to the feasible and individually-rational payoffs.
+}
+\label{fig:bos_feasible_enforceable_payoffs}
+\end{figure}
+\end{example}
+
+The folk theorem is not a single result.
+It takes different forms, each targeting a specific scenario.
+The simplest result concerns perfect-monitoring repeated games.
+
+\begin{theorem}[Perfect-monitoring Folk Theorem]
+\label{res:perfect-monitoring_folk_theorem}
+Let~\(u \from \cA \to \bR\pow{\CI}\) describe a one-shot game.
+Let~\(p \in \bR\pow{\CI}\) be a feasible strictly-individually-rational payoff for~\(u\).
+
+There exist strategies~\(\sigma = \agstuple{\sigma}\) and discount factors~\(\delta = \agstuple{\delta}\) close enough to~\(1\) such that~\(\sigma\) form a subgame-perfect equilibrium for the perfect-monitoring repeated game~\(\tuple{u, \delta}\) yielding an expected sum of discounted payoff of~\(p\).
+\end{theorem}
+For a proof of this result, see in~\cite[Proposition~3.8.1]{mailath_samuelson:2006}
+
+Apart from perfect-monitoring repeated games, there are two other categories of repeated games.
+Public imperfect-monitoring and private monitoring repeated games are explored next.
+Their associated folk theorems are brushed upon.
+
+\subsection{Public Imperfect Monitoring}
+
+Consider a set of agents~\(\cI\) and a one-shot game described by utility functions~\(u = \agstuple{u}\) where~\(u\Ii \from \cA\Ii \to \bR \).
+At each time step~\(t\), agent~\(i\) chooses an action~\(a\Ii \in \cA\Ii\).
+Over time, the agents accumulate some information.
+The joint action induces a signal~\(s\), from finite signal space~\(\cS\), distributed according to
+\[
+s\nxt \drawn n \of{a},
+\]
+where~\(n \from \cA \to \distribover{\cS}\).
+The sequence of signals is called the public history, or simply history when there is no risk of confusion.
+The history up to time~\(t\) is~\(h\Tt = \tuple{\sseqcom{s}{\tm}{0}{1}{t-1}}\).
+Denote by~\(\cH\Tt\) the set of histories up to time~\(t\) and by~\(\cH = \union\idxin{t}{\bN} \cH\Tt\) the set of all possible histories.
+The information observable over an infinite run is called an infinite history.
+The set of infinite histories is denoted by~\(\cH\Tinf\).
+Each agent also observes the actions it has played.
+This sequence of actions is called the its private history.
+Agent~\(i\)' private history up to time~\(t\) is~\(p\Ii\Tt = \tuple{\sseqcom{a\Ii}{\tm}{0}{1}{t-1}}\).
+
+The knowledge of the agents in a two-player public imperfect-monitoring repeated game is pictured in~\cref{fig:agent_knowledge_public-monitoring_repeated_game}.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_public-monitoring_repeated_game}
+\ccaption[Agent knowledge in a two-player public-monitoring repeated game.]{
+The public history is shared as it is observed by both agents.
+}
+\label{fig:agent_knowledge_public-monitoring_repeated_game}
+\end{figure}
+
+
+Public-monitoring folk theorem results exist.
+Under some technical conditions for the signal, all the feasible strictly-individually-rational payoff are achievable by sequentially-rational equilibria in public strategies.
+A strategy is public if it only uses the public history to compute actions.
+The knowledge of the agents in a two-player public imperfect-monitoring repeated game with public strategies is pictured in~\cref{fig:agent_knowledge_public-monitoring_repeated_game_public_strategies}.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_public-monitoring_repeated_game_public_strategies}
+\ccaption[Agent knowledge in a two-player public-monitoring repeated game with public strategies.]{
+The private histories are not kept and only the public history remains.
+}
+\label{fig:agent_knowledge_public-monitoring_repeated_game_public_strategies}
+\end{figure}
+
+\subsection{Private Monitoring}
+\label{sec:private_monitoring}
+
+Consider a set of agents~\(\cI\) and a one-shot game described by utility functions~\(u = \agstuple{u}\) where~\(u\Ii \from \cA\Ii \to \bR \).
+At each time step~\(t\), agent~\(i\) chooses an action~\(a\Ii \in \cA\Ii\).
+The joint action induces for agent~\(i\) a signal~\(s\Ii\) from finite signal space~\(\cS\Ii\).
+The signals~\(s = \agstuple{s}\) are potentially correlated and distributed according to
+\[
+s\nxt \drawn n \of{a},
+\]
+where~\(n \from \cA \to \distribover{\cS}\).
+The sequence of signals observed by agent~\(i\) is called its private history, or simply history when there is no risk of confusion.
+Agent~\(i\)'s history up to time~\(t\) is~\(h\Ii\Tt = \tuple{\sseqcom{s\Ii}{\tm}{0}{1}{t-1}}\).
+Denote by~\(\cH\Ii\Tt\) the set of agent~\(i\)'s histories up to time~\(t\) and by~\(\cH\Ii = \union\idxin{t}{\bN} \cH\Ii\Tt\) the set of all possible histories.
+The information observable over an infinite run is called an infinite history.
+The set of infinite histories for agent~\(i\) is denoted by~\(\cH\Ii\Tinf\).
+
+The knowledge of the agents in a two-player private-monitoring repeated game is pictured in~\cref{fig:agent_knowledge_private-monitoring_repeated_game}.
+
+\begin{figure}[htp]
+\centering
+\inputtikz{agent_knowledge_private-monitoring_repeated_game}
+\ccaption[Agent knowledge in a two-player private-monitoring repeated game.]{
+}
+\label{fig:agent_knowledge_private-monitoring_repeated_game}
+\end{figure}
+
+Perfect-monitoring repeated games are closely related to~\acp{mdp}.
+Therefore, the sequential-rationality condition in a perfect-monitoring repeated game requires the Bellman equation to be satisfied after every possible history.
+Similarly, private-monitoring repeated games are related to~\acp{pomdp}.
+Agent~\(i\) faces a \ac{pomdp} with state~\(\agstuple{h}\) and observation~\(\tuple{a\Ii, s\Ii}\).
+Accordingly, in the private-monitoring setting, the sequential-rationality condition requires that each agent's strategy be optimal for \aac{pomdp}.
+This requires that the Bellman equation involving beliefs over the state be satisfied after every possible tuple of histories~\(\agstuple{h}\).
+The fact that the agent do not share a public signal makes this setting incredibly more complicated.
+
+The folk theorem for private-monitoring repeated games has recently been derived~\cite{sugaya:2011}.
+Before this 200-page long achievement, some partial results relied on the existence of subsets of strategies with a nice recursive structure.
+For example, belief-free equilibria~\cite{ely_valimaki:2002,ely_horner_olszewski:2005} and weakly belief-free equilibria~\cite{kandori:2011} are two solution concepts that were used to derive some partial folk theorems.
+In a belief-free equilibrium, agents must only use actions that are optimal no matter what their belief about the last action played by their opponents is.
+In a weakly belief-free equilibrium, agents only need to have correct beliefs about the last action played by their opponents.
+
+\section{Stochastic Games}
+Stochastic games~\cite{shapley:1953} are the most general extension of \acp{mdp} to the multiagent setting.
+The utility functions of the agents depend on a state whose dynamic is impacted by the joint actions.
+In other terms, for each state, the agents play a different game.
+Their actions impact the payoffs and the transition probabilities between states.
+In a stochastic game, the agents want to maximize the expected sum of their discounted payoffs.
+
+In a stochastic game, a state evolves in discrete time controlled by the joint action of a set of agents~\(\cI\).
+The state at time~\(t+1\) is a random variable depending only on the state of the system at time~\(t\) and the joint action played at time~\(t\).
+This dynamic is captured by the short notation
+\begin{equation*}
+x\nxt \drawn f \of {x, a},
+\end{equation*}
+where~\(x\) and~\(x\nxt\) are states in a finite state space~\(\cX\) and~\(a = \tuple{\seqcom{a}{\ag}{1}{\card{\cI}}}\) is a joint action in the finite joint action set~\(\cA = \prod\idxin{i}{\cI} \cA\Ii\).
+In state~\(x\), the joint action~\(a\) yields for agent~\(i\) a payoff~\(u\Ii \of{x, a}\).
+
+A variety of stochastic games are defined by varying the monitoring structure.
+As an example, the agent-knowledge diagrams for perfect and private monitoring are presented in \cref{fig:agent_knowledge_public_information_stochastic_game,fig:agent_knowledge_private_information_stochastic_game}.
+
+The main results in repeated games characterize the payoffs achievable at equilibrium.
+There are virtually no result to actually compute equilibrium strategies.
+This lack of result is not surprising.
+In the simplest setting of perfect-monitoring repeated game, at equilibrium an agent need to solve \aac{mdp}.
+This \ac{mdp} depends on the strategies of its opponents.
+However, the strategies of the opponents is usually not available to the agent, especially in a learning setting where the strategies evolve.
+Stochastic games form a strict superset of repeated games.
+The added complexity explains that there are very few results available.
+
+\begin{figure}[pth]
+\centering
+\inputtikz{agent_knowledge_stochastic_game}
+\caption{
+Agent knowledge in a two-player perfect-monitoring stochastic game
+}
+\label{fig:agent_knowledge_public_information_stochastic_game}
+\end{figure}
+
+\begin{figure}[pth]
+\centering
+\inputtikz{agent_knowledge_partial_information_stochastic_game}
+\caption{
+Agent knowledge in a two-player private-monitoring stochastic game
+}
+\label{fig:agent_knowledge_private_information_stochastic_game}
+\end{figure}

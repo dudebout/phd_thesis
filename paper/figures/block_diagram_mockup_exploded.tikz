@@ -1,0 +1,14 @@
+\node [draw, minimum height = 30pt] (m) {\(z\nxt \drawn m\K \of{z, s\nxt}\)};
+
+\coordinate (s2) at (m.north);
+\coordinate [above = 30pt of s2] (s1);
+\coordinate (z1) at (m.south);
+\coordinate [below = 30pt of z1] (z2);
+
+\draw [->] (s1) -- node [right] {\(s\)} (s2);
+\draw [->] (z1) -- node [connection] (z3) {} node [left] {\(z\)} (z2);
+
+\coordinate (z5) at (m.east);
+\coordinate [right = 15pt of z5] (z4);
+
+\draw [->] (z3) -| (z4) -- (z5);

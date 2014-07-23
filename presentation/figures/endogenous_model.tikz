@@ -1,0 +1,65 @@
+\pgfmathsetseed{1234}
+
+\node [nature] (nature) {Nature};
+\node [dynamic, below = 50pt of nature] (f) {\(f\)};
+\node [markov strategy, left = 60pt of f] (sigma) {\(\sigma\)};
+
+\node [below = 30pt of sigma.south west, anchor = north west, inner sep =0] {Real System: \(\rbR\)};
+
+\draw [->, alert on=<3>] (nature) -- node [connection] (s) {} node [right] {\(s\)} (f);
+\path (s) -| node [pos = 0.25, model, alert on=<2>] (m) {\(m^{\alt<1>{k}{}}\)} (sigma.north);
+
+\draw [->, alert on=<3>] (s) -- (m);
+\draw [->, alert on=<3>] (m) -| node [pos=0.25, above] {\(z\)} (sigma);
+
+\coordinate (x1) at (f.160);
+\coordinate (a1) at (f.200);
+
+\draw [->] (x1) -- node [crossing, pos=.3, visible on=<2->] {} node [connection, pos=.52, visible on=<2->, alert on=<2>] (xtom) {} node [above, pos=.7] {\(x\)} (sigma.east|-x1);
+\draw [->] (sigma.east|-a1) -- node [connection, pos=.7, visible on=<2->, alert on=<2>] (atom) {} node [below, pos=.3] {\(a\)} (a1);
+
+\uncover<2->{
+\draw [->, alert on=<2>] (xtom) -- (xtom|-m.south);
+\draw [->, alert on=<2>] (atom) -- (atom|-m.south);
+}
+
+\node<3> [alert, above = 10 pt of m] {\(\probacond{s\nxt}{z}\)};
+
+\node [predictor, yshift = -20pt, right = 130pt of nature.south, anchor = south west, alert on=<3>] (predictor') {\(\mu\)};
+\node [dynamic, below = 30pt of predictor'] (f') {\(f\)};
+\node [markov strategy, left = 60pt of f'] (sigma') {\(\sigma\)};
+
+\node [inner sep=0pt, above = 120pt of sigma'.north west, anchor=south west] {\(u \of{x, a, s\nxt}, \delta\)};
+
+\node [below = 30pt of sigma'.south west, anchor = north west, inner sep =0] {Mockup System: \(\rbM\)};
+
+\draw [->] (predictor') -- node [connection] (s'1) {} node [left] {\(s\)} (f');
+
+\node [above = 30pt of predictor', model, alert on=<2>] (m') {\(m^{\alt<1>{k}{}}\)};
+
+\draw [->] (m') -- node [connection] (z') {} node [right] {\(z\)} (predictor');
+
+\coordinate [right = 35pt of s'1] (s'2);
+\coordinate [above = 15pt of m'] (s'3);
+
+\draw [->] (s'1) -| (s'2) |- (s'3) -- (m');
+\draw [->] (z') -| (sigma');
+
+
+\coordinate (x'1) at (f'.160);
+\coordinate (a'1) at (f'.200);
+
+\draw [->] (x'1) -- node [crossing, pos=.3, visible on=<2->] {} node [connection, pos=.5, visible on=<2->, alert on=<2>] (xtom') {} node [above, pos=.7] {\(x\)} (sigma'.east|-x'1);
+\draw [->] (sigma'.east|-a'1) -- node [connection, pos=.7, visible on=<2->, alert on=<2>] (atom') {} node [below, pos=.3] {\(a\)} (a'1);
+
+\uncover<2->{
+\path let
+  \p1 = (xtom'),
+  \p2 = (atom'),
+  \p3 = (z')
+in
+  (\x1, \y3) --   node [crossing, pos=0] {} node [crossing, pos=1] {} (\x2, \y3);
+
+\draw [->, alert on=<2>] (xtom') |- (m'.167);
+\draw [->, alert on=<2>] (atom') |- (m'.193);
+}

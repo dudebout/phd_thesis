@@ -1,0 +1,30 @@
+\begin{tikzpicture}[odd rows/.style={fill=black!7}]
+
+\matrix [information flow, column sep=30pt, odd rows readability guides] {
+|[alias=w]| w\Tt &                                          &                                                  & |[alias=wP]| w\Tp \drawn n \of{w\Tt, a\Tt, s\Tt, x\Tp} \\
+                 & |[alias=s]| s\Tt \drawn \nu \of{w\Tt}    &                                                  &                                                        \\
+|[alias=x]| x\Tt &                                          & |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt, s\Tt} &                                                        \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{h\Tt} &                                                  &                                                        \\
+|[alias=h]| h\Tt &                                          &                                                  & |[alias=hP]| h\Tp = \tuple{h\Tt, a\Tt, s\Tt, x\Tp}     \\
+};
+
+\draw [dependency]            (w)  -- (wP);
+\draw [dependency]            (w)  -- (s);
+
+\draw [dependency]            (s)  -- (wP);
+\draw [dependency, emphasize] (s)  -- (xP);
+\draw [dependency]            (s)  -- (hP);
+
+\draw [dependency, emphasize] (x)  -- (xP);
+
+\draw [dependency]            (xP) -- (wP);
+\draw [dependency, emphasize] (xP) -- (hP);
+
+\draw [dependency, emphasize] (a)  -- (xP);
+\draw [dependency]            (a)  -- (wP);
+\draw [dependency, emphasize] (a)  -- (hP);
+
+\draw [dependency, emphasize] (h)  -- (a);
+\draw [dependency, emphasize] (h)  -- (hP);
+
+\end{tikzpicture}

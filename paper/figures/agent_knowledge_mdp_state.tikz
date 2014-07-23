@@ -1,0 +1,9 @@
+\matrix [information flow, column sep = 35pt, even rows readability guides]
+{
+|[alias=x]| x\Tt &                                          & |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt} \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{x\Tt} &                                            \\
+};
+
+\draw [dependency] (x)      -- (xP);
+\draw [dependency] (x)      -- (a.west);
+\draw [dependency] (a.6)    -- (xP.186);

@@ -1,0 +1,19 @@
+\matrix (m) [information flow, column sep = 35pt, even rows readability guides]
+{
+|[alias=z1]| z\one\Tt &                                                       &                                  & |[alias=z1P]| z\one\Tp \drawn m\one \of{z\one\Tt, s\one\Tp} \\
+                      & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{z\one\Tt} &                                  &                                                             \\
+                      &                                                       & |[alias=s1]| s\one\Tp = a\two\Tt &                                                             \\
+                      &                                                       & |[alias=s2]| s\two\Tp = a\one\Tt &                                                             \\
+                      & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{z\two\Tt} &                                  &                                                             \\
+|[alias=z2]| z\two\Tt &                                                       &                                  & |[alias=z2P]| z\two\Tp \drawn m\two \of{z\two\Tt, s\two\Tp} \\
+};
+
+\draw [dependency] (z1)                 -- (a1.west);
+\draw [dependency] (a1.east)            -- (s2.west);
+\draw [dependency, emphasize] (s1.east) -- (z1P.186) node [midway, sloped, below] {\scriptsize{signal}};
+\draw [dependency] (z1)                 -- (z1P);
+
+\draw [dependency] (z2)                 -- (a2.west);
+\draw [dependency] (a2.east)            -- (s1.west);
+\draw [dependency] (s2.east)            -- (z2P.174);
+\draw [dependency] (z2)                 -- (z2P);

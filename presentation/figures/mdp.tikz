@@ -1,0 +1,32 @@
+\node [full dynamic]               (f)     {\(x\nxt \drawn f \of{x, a}\)};
+\node [strategy, left = 30pt of f] (sigma) {\(\sigma\)};
+
+\coordinate (a2) at (f.165);
+\coordinate [left = 30pt of a2] (a1);
+
+\coordinate (x4) at (f.195);
+\coordinate [left = 30pt of x4] (x6);
+\coordinate (x1) at (f.east);
+\coordinate [right = 15pt of x1] (x2);
+\coordinate [below = 15pt of f.south] (x3);
+
+\draw [->]  (a1) -- node [above] {\(a\)} (a2);
+\draw [<->] (x4) -- node [connection] (x5) {} (x6);
+\draw       (x1) -- (x2) |- (x3) -| (x5.center) node [above] {\(x\)};
+
+\node [above = of sigma.north west, anchor = west, inner sep=0pt] {\(\displaystyle \max\idx{\sigma}\expectof[\sigma]{\sum\idxfromto{t}{0}{\infty} \delta\pow{t} \mult u\of{x\Tt,a\Tt}}\)};
+
+\uncover<2->{
+\node [alert on=<3-4>, alt=<4>{markov strategy}{strategy}, right = 80pt of f] (sigma') {\(\sigma\)};
+\node [dynamic, right = of sigma']  (f')     {\(f\)};
+
+\coordinate (a'2) at (f'.160);
+\coordinate [left = of a'2] (a'1);
+\coordinate (x'1) at (f'.200);
+\coordinate [left = of x'1] (x'2);
+
+\draw [->] (a'1) -- node [above] {\(a\)} (a'2);
+\draw [->, alert on=<3-4>] (x'1) -- node [below] {\(x\)} (x'2);
+
+\node [above = of sigma'.north west, anchor = west, inner sep=0pt] {\(u \of{x, a}, \delta\)};
+}

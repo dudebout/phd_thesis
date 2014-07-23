@@ -1,0 +1,21 @@
+\tikzset{state/.style={draw, circle, minimum width = 25pt}}
+
+\node [state]                     (z0) {\(z\param{0}\)};
+\node [state, right = 50pt of z0] (z1) {\(z\param{1}\)};
+
+\node [above = 50pt of z0] (s0) {\(\mu\of{z\param{0}} = \; ?\)};
+\node [above = 50pt of z1] (s1) {\(\mu\of{z\param{1}} = \; ?\)};
+
+\draw [->] (z0) to [bend left = 30] node [above] (z10) {\(s = 1\)} (z1);
+\draw [->] (z1) to [bend left = 30] node [below] (z01) {\(s = 0\)} (z0);
+
+\path (z0) edge[loop left]  node [left]  (z00) {\(s = 0\)} (z0);
+\path (z1) edge[loop right] node [right] (z11) {\(s = 1\)} (z1);
+
+\draw [->, double] (z0) -- (s0);
+\draw [->, double] (z1) -- (s1);
+
+\begin{pgfonlayer}{background}
+  \node [translucent, draw, shaded, rectangle, fit= (z00) (z01) (z10) (z11), inner sep=5pt] (m) {};
+  \node [dimmer, anchor = south east] at (m.north east) {\(m^{1}\)};
+\end{pgfonlayer}

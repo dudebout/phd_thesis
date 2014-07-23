@@ -1,0 +1,28 @@
+\tikzstyle{agent} = [draw, circle, inner sep = 1pt, font = \scriptsize]
+\tikzstyle{action} = [fill = white, inner sep = 1pt]
+
+\node (one) [agent] {\(1\)}
+  child{
+    node{\(1, 0\)}
+    edge from parent
+    node (L) [action] {L}
+  }
+  child{
+    node (two) [agent] {\(2\)}
+    child{
+      node {\(2, 2\)}
+      edge from parent
+      node [action] {l}
+    }
+    child{
+      node {\(0, 1\)}
+      edge from parent
+      node [action] {r}
+    }
+    edge from parent
+  };
+
+\node (almostR) [right = of L] {};
+\path[name path = horizontal] (L) -- (almostR);
+\path[name path = onetwo] (one) -- (two);
+\node [action, name intersections = {of = onetwo and horizontal}] at (intersection-1) {R};

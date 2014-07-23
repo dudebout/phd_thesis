@@ -1,0 +1,12 @@
+\node [dynamic, minimum width = 40pt, minimum height=40pt] (f) {\(f\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = of x1] (x2);
+\coordinate (s2) at (f.north);
+\coordinate [above = of s2] (s1);
+
+\draw [->] (a1) -- node [above] {\(a\)} (a2);
+\draw [->] (x1) -- node [below] {\(x\)} (x2);
+\draw [->] (s1) -- node [right] {\(s\)} (s2);

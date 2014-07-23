@@ -1,0 +1,18 @@
+\node [draw, double, minimum width = 40pt, minimum height=40pt] (f) {\(f\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = of x1] (x2);
+
+\node [draw, noisy, minimum width = 40pt, minimum height = 40pt, above = of f] (nature) {Nature};
+
+\draw [->] (a1) -- node [above] {\(a\)} (a2);
+\draw [->] (x1) -- node [below] {\(x\)} (x2);
+\draw [->] (nature) -- node [connection] (s) {} node [right] {\(s\)} (f);
+
+\draw let
+  \p1 = (a1),
+  \p2 = (s)
+in
+  [->] (s.center) -- (\x1, \y2);

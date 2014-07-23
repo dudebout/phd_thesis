@@ -1,0 +1,94 @@
+\ProvidesPackage{fig}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\RequirePackage[figuresright]{rotating}
+\usetikzlibrary{matrix.skeleton}
+\usetikzlibrary{calc}
+
+\tikzset{font=\small}
+\pgfplotsset{compat=1.7}
+\pgfplotsset{every axis plot/.append style={line width=0.8pt}} %thick
+\usetikzlibrary{trees}
+\usetikzlibrary{intersections}
+\usetikzlibrary{positioning}
+
+\tikzset{dimmer/.style={black!60}}
+\tikzset{translucent/.style={black!30}}
+\tikzset{shaded/.style={fill=black!10}}
+\tikzset{connection/.style={circle, fill, inner sep = 0, minimum size = 2pt}}
+\tikzset{measurement/.style={circle, dimmer, draw, fill=white, inner sep = 0, minimum size = 2pt}}
+\tikzset{crossing/.style={fill=white, minimum width = 2pt + \pgflinewidth, inner sep=0pt}}
+\tikzset{noisy/.style={circle,
+                       decorate,
+                       decoration={random steps,
+                                   segment length=2pt,
+                                   amplitude=2pt}}}
+
+\def\sglinecolor{black!60}
+
+\usetikzlibrary{matrix}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+
+\newcommand{\muparameter}{}
+\newcommand{\sigmaparameter}{}
+\newcommand{\agparameter}{}
+
+\newcommand{\inputtikz}[2][]{\begin{tikzpicture}[#1]
+\input{figures/#2.tikz}
+\end{tikzpicture}}
+
+\newcommand*{\circleintersections}[2]{
+\fill [name intersections={of=#1 and #2, name=i, total=\t}]
+  \foreach \s in {1,...,\t}
+    {(i-\s) circle (2pt)};
+}
+
+\newcommand*{\connectintersections}[2]{
+\circleintersections{#1}{#2}
+\draw [name intersections={of=#1 and #2, name=i, total=\t}, line width=1.6pt, line cap=round]
+  (i-1) \foreach \s in {2,...,\t} {-- (i-\s)
+};
+}
+
+
+\tikzset{
+  time line/.style={
+    label skeleton,
+    append after command={
+      \pgfextra
+        \pgfinterruptpath
+          \setbox\tikz@figbox=\box\pgfutil@voidb@x
+            \node (tt)   [below of = \tikzlastnode-cell-\the\pgfmatrixcurrentrow-1] {};
+            \node [dimmer, anchor = north] at (tt) {$t$};
+            \node (tp)   [below of = \tikzlastnode-cell-\the\pgfmatrixcurrentrow-\the\pgfmatrixcurrentcolumn] {};
+            \node [dimmer, anchor = north] at (tp) {$t+1$};
+
+            \draw [dimmer, ->] let
+              \p{line} = (tt),
+              \p{left} = (m-cell-\the\pgfmatrixcurrentrow-1.west),
+              \p{right} = (m-cell-\the\pgfmatrixcurrentrow-\the\pgf@matrix@numberofcolumns.east)
+            in
+              (\x{left}, \y{line}) -- (\x{right}, \y{line});
+
+           \draw [dimmer] ($ (tt.center) + (0, 2pt) $) -- ($ (tt.center) - (0, 2pt) $);
+           \draw [dimmer] ($ (tp.center) + (0, 2pt) $) -- ($ (tp.center) - (0, 2pt) $);
+        \endpgfinterruptpath
+      \endpgfextra
+    }
+  }
+}
+
+\tikzset{information flow/.style = {name = m, matrix of math nodes, nodes = {anchor = center}, time line}}
+\tikzset{dependency/.style = {->, densely dotted}}
+\tikzset{emphasize/.style = {solid, thick}}
+\tikzset{odd rows readability guides/.style= {style odd rows on layer = {background}{fill = black!4}}}
+\tikzset{even rows readability guides/.style= {style even rows on layer = {background}{fill = black!4}}}
+
+% Fixes a bug in the fit library throwing underfull box errors
+% http://tex.stackexchange.com/questions/61064/badbox-from-pgf-layer-using-fit
+% http://tex.stackexchange.com/questions/85285/cant-get-rid-of-strange-underfull-hbox-with-tikz-fit-library
+\tikzstyle{every fit} += [text badly centered]

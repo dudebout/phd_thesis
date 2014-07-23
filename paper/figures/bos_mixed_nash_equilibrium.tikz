@@ -1,0 +1,33 @@
+\tikzset{node distance = 0.2cm and 0.2cm} % the first value is unused
+\tikzset{underbrace/.style={decorate, decoration = {brace, mirror, raise = 0.2cm}, every node/.style = {below, yshift=-.4cm}}}
+
+\matrix [matrix of math nodes, name = male] {
+&\dfrac{3}{4}\rbF \\
+&\dfrac{1}{4}\rbO \\
+};
+
+\node [right = of male, name = times] {\(\times\)};
+
+\matrix [matrix of math nodes, name = female, right = of times] {
+\dfrac{1}{3} \rF & \dfrac{2}{3}\rO \\
+};
+
+\node [right = of female, name = equal] {\(=\)};
+
+\matrix [matrix of math nodes, name = joint, right = of equal] {
+\dfrac{1}{4} \tuple{\rbF, \rF} & \dfrac{1}{2} \tuple{\rbF, \rO} \\
+\dfrac{1}{12} \tuple{\rbO, \rF} & \dfrac{1}{6} \tuple{\rbO, \rO} \\
+};
+
+\node [right = of joint, name = implies] {\(\implies\)};
+
+\node [right = of implies, name = utilities] {\(u\ag{\male} = \frac{2}{3}, u\ag{\female} = \frac{3}{2}\)};
+
+\draw [underbrace] (male.south west) -- node {\(\alpha\ag{\male}\)} (male.south east);
+\draw [underbrace] let
+  \p{vertical} = (male.south),
+  \p{left} = (female.west),
+  \p{right} = (female.east)
+in
+  (\x{left}, \y{vertical}) -- node {\(\alpha\ag{\female}\)} (\x{right}, \y{vertical});
+\draw [underbrace] (joint.south west) -- node [name = alpha]{\(\alpha\)} (joint.south east);

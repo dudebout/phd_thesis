@@ -1,0 +1,10 @@
+\node [system] (r) {\(\rbR\)};
+\node [system, left = 50pt of r] (m) {\(\rbM\)};
+\coordinate [left = 50pt of m] (start);
+\coordinate [right = 50pt of r] (end);
+
+\draw [system connection] (start) -- node [above] {\(\mu\)} (m);
+
+\draw [system connection] (m) -- node [above] {\(\sigma\)} (r);
+
+\draw [system connection] (r) -- node [above] {\(\mu\)} (end);

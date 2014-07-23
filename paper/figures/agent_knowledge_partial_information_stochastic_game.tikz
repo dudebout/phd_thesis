@@ -1,0 +1,23 @@
+\matrix [information flow, column sep = 10pt, even rows readability guides]
+{
+|[alias=h1]| h\one\Tt &                                                       &                                                         & [-25pt]                                                          & [-40pt] |[alias=h1P]| h\one\Tp = \tuple{h\one\Tt, a\one\Tt, s\one\Tp} \\
+                      & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{h\one\Tt} &                                                         &                                                           &                                                               \\
+                      &                                                       & |[alias=x]| x\Tp \drawn f \of{x\Tt, a\one\Tt, a\two\Tt} &                                                                                                                           \\
+                      &                                                       &                                                         & |[alias=s]| \tuple{s\one\Tp, s\two\Tp} \drawn n \of{x\Tp} &                                                               \\
+                      & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{h\two\Tt} &                                                         &                                                           &                                                               \\
+|[alias=h2]| h\two\Tt &                                                       &                                                         &                                                           & |[alias=h2P]| h\two\Tp = \tuple{h\two\Tt, a\two\Tt, s\two\Tt} \\
+};
+
+\draw [dependency] (h1)     -- (h1P);
+\draw [dependency] (h1)     -- (a1.west);
+\draw [dependency] (a1.355) -- (x.175);
+\draw [dependency] (a1.5)   -- (h1P.185);
+\draw [dependency] (s.40)   -- (h1P.195);
+
+\draw [dependency] (h2)     -- (h2P);
+\draw [dependency] (h2)     -- (a2.west);
+\draw [dependency] (a2.5)   -- (x.185);
+\draw [dependency] (a2.355) -- (h2P.175);
+\draw [dependency] (s.320)  -- (h2P.165);
+
+\draw [dependency] (x.east) -- (s.160);

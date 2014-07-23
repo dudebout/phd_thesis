@@ -1,0 +1,17 @@
+\matrix [information flow, column sep = 35pt, even rows readability guides]
+{
+|[alias=h1]| h\one\Tt &                                                       & |[alias=h1P]| h\one\Tp = \tuple{h\one\Tt, a\one\Tt, a\two\Tt} \\
+                      & |[alias=a1]| a\one\Tt \drawn \sigma\one \of{h\one\Tt} &                                                               \\
+                      & |[alias=a2]| a\two\Tt \drawn \sigma\two \of{h\two\Tt} &                                                               \\
+|[alias=h2]| h\two\Tt &                                                       & |[alias=h2P]| h\two\Tp = \tuple{h\two\Tt, a\two\Tt, a\one\Tt} \\
+};
+
+\draw [dependency] (h1)      -- (h1P);
+\draw [dependency] (h1)      -- (a1.west);
+\draw [dependency] (a1.6)    -- (h1P.186);
+\draw [dependency] (a1.east) -- (h2P.north west);
+
+\draw [dependency] (h2)      -- (h2P);
+\draw [dependency] (h2)      -- (a2.west);
+\draw [dependency] (a2.354)  -- (h2P.176);
+\draw [dependency] (a2.east) -- (h1P.south west);

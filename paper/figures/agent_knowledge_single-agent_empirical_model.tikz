@@ -1,0 +1,16 @@
+\matrix [information flow, column sep = 20pt, even rows readability guides]
+{
+|[alias=x]| x\Tt &                                                & |[alias=xP]| x\Tp \drawn f \of{x\Tt, a\Tt, s\Tp} \\
+                 & |[alias=a]| a\Tt \drawn \sigma \of{x\Tt, z\Tt} &                                                  \\
+                 & |[alias=sP]| s\Tp \drawn \mu \of{z\Tt}         &                                                  \\
+|[alias=z]| z\Tt &                                                & |[alias=zP]| z\Tp = m\K \of{z\Tt, s\Tp}          \\
+};
+
+\draw [dependency] (sP.5)   -- (xP.190);
+\draw [dependency] (sP.355) -- (zP.175);
+\draw [dependency] (z)      -- (zP);
+\draw [dependency] (z.30)   -- (a.185);
+\draw [dependency] (z.15)   -- (sP.west);
+\draw [dependency] (a.east) -- (xP.185);
+\draw [dependency] (x)      -- (xP);
+\draw [dependency] (x)      -- (a.175);

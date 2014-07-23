@@ -1,0 +1,29 @@
+\begin{axis}[
+xmin=0,
+ymin=0,
+xmax=1,
+ymax=1,
+xtick={1},
+ytick={1},
+axis equal image,
+axis line style=dimmer,
+ticklabel style=dimmer,
+label style=dimmer,
+xlabel=\(x\),
+ylabel=\(f \of {x}\),
+]
+\addplot[name path=f1, solid, black] coordinates {(0,0.2) (0.5,0.2)};
+\addplot[name path=f2, solid, black] coordinates {(0.25,0.1) (0.25,0.9)};
+\addplot[name path=f3, solid, black, fill=gray] coordinates {(0.5,0.2) (0.5,0.75) (1,0.2) (0.5,0.2)};
+
+\addplot[name path=id, dashed] coordinates {(0,0) (1,1)};
+
+\node[anchor=north east] (origin) at (axis cs:0,0) {\(0\)};
+
+\circleintersections{f1}{id}
+\circleintersections{f2}{id}
+\connectintersections{f3}{id}
+
+\end{axis}
+
+\node [dimmer] at (origin) {\(0\)};

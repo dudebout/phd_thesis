@@ -1,0 +1,52 @@
+\node [draw, double, minimum width = 40pt, minimum height=40pt] (f) {\(f\ag{\agparameter}\)};
+
+\coordinate (a2) at (f.160);
+\coordinate [left = 70pt of a2] (a1);
+\coordinate (x1) at (f.200);
+\coordinate [left = 70pt of x1] (x2);
+
+\node [draw, minimum width = 40pt, minimum height = 20pt, above = of f] (mu) {\(\mu\ag{\agparameter}\)};
+\node [draw, double, minimum width = 40pt, minimum height = 20pt, above = of mu] (m) {\(m\ag{\agparameter}\)};
+
+\draw [->] (a1) -- node [pos = 0.3, above] {\(a\ag{\agparameter}\)} (a2);
+\draw [->] (x1) -- node [pos = 0.7, below] {\(x\ag{\agparameter}\)} (x2);
+\draw [->] (m) -- node [connection] (z) {} node [right] {\(z\ag{\agparameter}\)} (mu);
+\draw [->] (mu) -- node [connection] (s1) {} node [left] {\(s\ag{\agparameter}\)} (f);
+
+\coordinate [right = 30pt of s1] (s2);
+\coordinate (s4) at (m.north);
+\coordinate [above = 15pt of s4] (s3);
+
+\draw [->] (s1) -- (s2) |- (s3) -- (s4);
+
+\draw let
+  \p1 = (a1),
+  \p2 = (z)
+in
+  [->] (z.center) -- (\x1, \y2);
+
+\path let
+  \p1 = (m.north),
+  \p2 = (f.south),
+  \p3 = (x2)
+in
+  node [inner sep = 0pt] at ($ (\x3, \y1) - (20pt + 2\pgflinewidth, \pgflinewidth) $) (sigma1) {}
+  node [inner sep = 0pt] at ($ (\x3, \y2) + (-2\pgflinewidth, \pgflinewidth) $) (sigma2) {};
+
+\node [draw, fit = (sigma1) (sigma2), inner sep = 0pt] {\(\sigma\ag{\agparameter}\)};
+
+\path let
+  \p1 = (m.west),
+  \p2 = (a1),
+  \p3 = (x1),
+  \p4 = (z)
+in
+  node [inner sep = 0pt] at ($ (\x1, \y1) - (0, 5pt) $) (a4) {}
+  node [connection] at ($ (\x1, \y2) - (20pt, 0) $) (a3) {}
+  node [crossing] at ($ (\x1, \y4) - (20pt, 0) $) {}
+  node [inner sep = 0pt] at ($ (\x1, \y1) + (0, 5pt) $) (x4) {}
+  node [connection] at ($ (\x1, \y3) - (30pt, 0) $) (x3) {}
+  node [crossing] at ($ (\x1, \y4) - (30pt, 0) $) {};
+
+\draw [->] (a3) |- (a4);
+\draw [->] (x3) |- (x4);

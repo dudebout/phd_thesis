@@ -1,0 +1,70 @@
+\pgfmathsetseed{1234}
+
+\node [dynamic] (f1) {\(f\Alt<7|handout:0>{\alert{\two}}{\one}\)};
+\node [markov strategy, left = 60pt of f1] (sigma1) {\(\sigma\Alt<7|handout:0>{\alert{\two}}{\one}\)};
+
+\uncover<1>{
+\node [dynamic, right = 60pt of f1] (f2) {\(f\two\)};
+\node [markov strategy, right = 60pt of f2] (sigma2) {\(\sigma\two\)};
+}
+
+\coordinate (x1) at (f1.200);
+\coordinate [left = 60pt of x1] (x2);
+\draw [->] (x1) -- node [below] {\(x\Alt<7|handout:0>{\alert{\two}}{\one}\)} (x2);
+
+\coordinate (a2) at (f1.160);
+\coordinate [left = 60pt of a2] (a1);
+\draw [->] (a1) -- node [connection, visible on=<1-3>, alert on=<3>] (a3) {} node [above, visible on=<4-|handout:0>] {\(a\Alt<7|handout:0>{\alert{\two}}{\one}\)} (a2);
+\coordinate [above = of a3] (a4);
+\coordinate (a5) at (f2.north);
+\coordinate (a7) at (sigma2.north);
+
+\draw [->, visible on=<1-3>, alert on=<3>] (a3) -- (a4) -| node [pos=.25, above] {\(a\Alt<7|handout:0>{\alert{\two}}{\one}\)} node [pos=.5, connection] (a6) {} (a5);
+
+\node [above = 60pt of sigma1.north west, anchor = west, inner sep=0pt] {\(u\Alt<7|handout:0>{\alert{\two}}{\one} \of{x\Alt<7|handout:0>{\alert{\two}}{\one}, a\Alt<7|handout:0>{\alert{\two}}{\one}, s\Alt<7|handout:0>{\alert{\two}}{\one}\nxt}, \delta\Alt<7|handout:0>{\alert{\two}}{\one}\)};
+
+\uncover<1>{
+\coordinate (x'1) at (f2.20);
+\coordinate [right = 60pt of x'1] (x'2);
+\draw [->] (x'1) -- node [above] {\(x\two\)} (x'2);
+
+\coordinate (a'2) at (f2.340);
+\coordinate [right = 60pt of a'2] (a'1);
+\draw [->] (a'1) -- node [connection] (a'3) {} (a'2);
+\coordinate [below = of a'3] (a'4);
+\coordinate (a'5) at (f1.south);
+\coordinate (a'7) at (sigma1.south);
+
+\draw [->] (a6)  -| node [above, pos=0] {\(s\two\nxt\)} node [pos=0, connection] {} node [pos=.25, model] (m2) {\(m^{k\two}\)} node [pos=.5, above] {\(z\two\)} (a7);
+
+\node [above = 60pt of sigma2.north east, anchor = east, inner sep=0pt, visible on=<1|handout:0>] {\(u\two \of{x\two, a\two, s\two\nxt}, \delta\two\)};
+}
+
+\draw [->, visible on=<1-4>] (a'3) -- (a'4) -| node [pos=.25, below, visible on=<1>] {\(a\two\)} coordinate [pos=.5] (a'6) (a'5);
+
+\draw [->] (a'6)  -| node [alt=<1-4>{below}{right}, pos=0] {\(s\Alt<7|handout:0>{\alert{\two}}{\one}\nxt\)} node [pos=0, connection] {} node [pos=.25, model] (m1) {\(m^{k\Alt<7|handout:0>{\alert{\two}}{\one}}\)}  node [pos=.5, below] {\(z\Alt<7|handout:0>{\alert{\two}}{\one}\)} (a'7);
+
+\node [fit = (f2) (m2) (sigma2), nature, visible on=<2-4>] {Nature};
+
+\uncover <5-|handout:0>{
+\node [below = 40pt of f1, nature] (nature) {Nature};
+\draw [->] (nature) -- (f1);
+}
+
+\uncover<6-|handout:0>{
+\node [dynamic, right = 130pt of f1] (f) {\(f\)};
+\node [nature, above = 50pt of f] (nature) {Nature};
+
+\node [markov strategy, left = 60pt of f] (sigma) {\(\sigma\)};
+
+\draw [->] (nature) -- node [connection] (s) {} node [right] {\(s\)} (f);
+\draw [->] (s) -| node [pos =.25, model] (m) {\(m^{k}\)} node [pos=0.5, above] {\(z\)} (sigma.north);
+
+\coordinate (x1) at (f.160);
+\coordinate (a1) at (f.200);
+
+\draw [->] (x1) -- node [above] {\(x\)} (sigma.east|-x1);
+\draw [->] (sigma.east|-a1) -- node [below] {\(a\)} (a1);
+
+\node [above = 80pt of sigma.north west, anchor = west, inner sep=0pt] {\(u \of{x, a, s\nxt}, \delta\)};
+}

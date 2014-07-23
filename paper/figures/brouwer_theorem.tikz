@@ -1,0 +1,25 @@
+\begin{axis}[
+xmin=0,
+ymin=0,
+xmax=1,
+ymax=1,
+xtick={1},
+ytick={1},
+domain=0:1,
+samples=100,
+axis equal image,
+axis line style=dimmer,
+ticklabel style=dimmer,
+label style=dimmer,
+xlabel=\(x\),
+ylabel=\(f \of {x}\),
+]
+\addplot[name path=id, dashed] coordinates {(0,0) (1,1)};
+\addplot[name path=f, solid, black] {9.25 * x^3 - 2 * x^2 + 0.2 - 6.75 * x^4};
+\node[anchor=north east] (origin) at (axis cs:0,0) {\(0\)};
+
+\circleintersections{f}{id}
+
+\end{axis}
+
+\node [dimmer] at (origin) {\(0\)};

@@ -1,0 +1,130 @@
+\node [draw, double, minimum width = 40pt, minimum height=40pt] (fone) {\(f\one\)};
+
+\coordinate (aone2) at (fone.160);
+\coordinate [left = 70pt of aone2] (aone1);
+\coordinate (xone1) at (fone.200);
+\coordinate [left = 70pt of xone1] (xone2);
+
+\node [minimum width = 40pt, minimum height = 40pt, above = 60pt of fone] (natureone) {};
+
+\draw [->] (aone1) -- node [pos = 0.3, above] {\(a\one\)} (aone2);
+\draw [->] (xone1) -- node [pos = 0.7, below] {\(x\one\)} (xone2);
+\draw [->] (natureone) -- node [measurement] (sone1) {} node [right] {\(s\one\)} (fone);
+
+\path let
+  \p1 = (aone1),
+  \p2 = (sone1)
+in
+  coordinate (sone2) at (\x1, \y2);
+
+\path (sone1) -- node [draw, double, minimum width = 40pt, minimum height = 20pt] (mone) {\(m\one\)} (sone2);
+\draw [->] (sone1) -- (mone);
+\draw [->] (mone) -- node [measurement] {} node [below] (zone) {\(z\one\)} (sone2);
+
+\node [inner sep = 0pt] at (mone.230) (aone4) {};
+\node [inner sep = 0pt] at (mone.310) (xone4) {};
+
+\draw let
+  \p1 = (aone1),
+  \p2 = (aone4)
+in
+  [->] (\x2, \y1) -- node [pos=0, connection] {} (aone4);
+
+\draw let
+  \p1 = (xone4),
+  \p2 = (aone1)
+in
+  node [crossing] at (\x1, \y2) {};
+
+\draw let
+  \p1 = (xone1),
+  \p2 = (xone4)
+in
+  [->] (\x2, \y1) -- node [pos=0, connection] {} (xone4);
+
+\path let
+  \p1 = (mone.north),
+  \p2 = (fone.south),
+  \p3 = (xone2)
+in
+  node [inner sep = 0pt] at ($ (\x3, \y1) - (20pt + 2\pgflinewidth, \pgflinewidth) $) (sigmaone1) {}
+  node [inner sep = 0pt] at ($ (\x3, \y2) + (-2\pgflinewidth, \pgflinewidth) $) (sigmaone2) {};
+
+
+\node [draw, fit = (sigmaone1) (sigmaone2), inner sep = 0pt] {\(\sigma\one\)};
+
+\begin{pgfonlayer}{background}
+  \node [translucent, draw, shaded, left = -10pt of natureone] (muone) {\color{black} \(\mu\one \of {z\one} \elmt{s\nxt\one} = \probacond{s\nxt\one}{z\one}\)};
+  \draw [->, dimmer] (zone.north) -- (muone.south-|zone);
+  \draw [->, dimmer] (sone1) -- (muone.south east);
+\end{pgfonlayer}
+
+
+
+\node [draw, noisy, anchor = west, minimum width = 40pt, minimum height = 40pt] at (natureone.east) (nature) {Nature};
+
+
+
+\node [draw, double, minimum width = 40pt, minimum height=40pt, right = 40pt of fone] (ftwo) {\(f\two\)};
+
+\coordinate (atwo2) at (ftwo.20);
+\coordinate [right = 70pt of atwo2] (atwo1);
+\coordinate (xtwo1) at (ftwo.340);
+\coordinate [right = 70pt of xtwo1] (xtwo2);
+
+\node [minimum width = 40pt, minimum height = 40pt, above = 60pt of ftwo] (naturetwo) {};
+
+\draw [->] (atwo1) -- node [pos = 0.3, above] {\(a\two\)} (atwo2);
+\draw [->] (xtwo1) -- node [pos = 0.7, below] {\(x\two\)} (xtwo2);
+\draw [->] (naturetwo) -- node [measurement] (stwo1) {} node [left] {\(s\two\)} (ftwo);
+
+\path let
+  \p1 = (atwo1),
+  \p2 = (stwo1)
+in
+  coordinate (stwo2) at (\x1, \y2);
+
+\path (stwo1) -- node [draw, double, minimum width = 40pt, minimum height = 20pt] (mtwo) {\(m\two\)} (stwo2);
+\draw [->] (stwo1) -- (mtwo);
+\draw [->] (mtwo) -- node [measurement] {} node [below] (ztwo) {\(z\two\)} (stwo2);
+
+\node [inner sep = 0pt] at (mtwo.310) (atwo4) {};
+\node [inner sep = 0pt] at (mtwo.230) (xtwo4) {};
+
+\draw let
+  \p1 = (atwo1),
+  \p2 = (atwo4)
+in
+  [->] (\x2, \y1) -- node [pos=0, connection] {} (atwo4);
+
+\draw let
+  \p1 = (xtwo4),
+  \p2 = (atwo1)
+in
+  node [crossing] at (\x1, \y2) {};
+
+\draw let
+  \p1 = (xtwo1),
+  \p2 = (xtwo4)
+in
+  [->] (\x2, \y1) -- node [pos=0, connection] {} (xtwo4);
+
+\path let
+  \p1 = (mtwo.north),
+  \p2 = (ftwo.south),
+  \p3 = (xtwo2)
+in
+  node [inner sep = 0pt] at ($ (\x3, \y1) + (20pt + 2\pgflinewidth, \pgflinewidth) $) (sigmatwo1) {}
+  node [inner sep = 0pt] at ($ (\x3, \y2) + (2\pgflinewidth, \pgflinewidth) $) (sigmatwo2) {};
+
+
+\node [draw, fit = (sigmatwo1) (sigmatwo2), inner sep = 0pt] {\(\sigma\two\)};
+
+\begin{pgfonlayer}{background}
+  \node [translucent, draw, shaded, right = -10pt of naturetwo] (mutwo) {\color{black} \(\mu\two \of {z\two} \elmt{s\nxt\two} = \probacond{s\nxt\two}{z\two}\)};
+  \draw [->, dimmer] (ztwo.north) -- (mutwo.south-|ztwo);
+  \draw [->, dimmer] (stwo1) -- (mutwo.south west);
+\end{pgfonlayer}
+
+\draw (nature.west) -- (natureone.south);
+\draw (nature.east) -- (naturetwo.south);
