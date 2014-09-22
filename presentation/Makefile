@@ -1,10 +1,11 @@
-TEXMFHOME = texmf
+TEXMFHOME := texmf
+export TEXMFHOME
 
 PACKAGES := $(wildcard *.sty)
 FIGURES := $(wildcard figures/*.tikz)
-SOURCES = presentation.tex content.tex $(FIGURES) $(PACKAGES)
+SOURCES := presentation.tex content.tex $(FIGURES) $(PACKAGES)
 
-latex = pdflatex -halt-on-error
+latex := pdflatex -halt-on-error
 
 .PHONY: all
 all: presentation.pdf handout.pdf

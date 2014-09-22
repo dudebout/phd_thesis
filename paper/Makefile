@@ -1,12 +1,13 @@
-TEXMFHOME = texmf
+TEXMFHOME := texmf
+export TEXMFHOME
 
 CONTENT := $(wildcard *.tex) $(wildcard content/*.tex)
 PACKAGES := $(wildcard *.sty)
 FIGURES := $(wildcard figures/*.tikz)
 
-COVER = ../cover/cover.pdf
+COVER := ../cover/cover.pdf
 
-latex = pdflatex -halt-on-error
+latex := pdflatex -halt-on-error
 
 .PHONY: all
 all: thesis.pdf online.pdf printed.pdf
